@@ -1,0 +1,8 @@
+## To do
+1. Transform tables to collections instead of subcollections of table collection
+
+## To run
+
+prisma generate && prisma migrate deploy && npm run build
+
+node build/index.js
