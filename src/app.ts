@@ -1,13 +1,13 @@
-import express, { Router } from 'express'
-import cors from 'cors'
+import cors from 'cors';
+import express from 'express';
+import { authRoutes } from './routes/auth';
+import { defaultRoutes } from './routes/default';
+import { formRoutes } from './routes/form';
+import { rolesRoutes } from './routes/roles';
+import { rowRoutes } from './routes/row';
+import { settingsRoutes } from './routes/settings';
 import { tableRoutes } from './routes/table';
 import { userRoutes } from './routes/user';
-import { authRoutes } from './routes/auth';
-import { rowRoutes } from './routes/row';
-import { defaultRoutes } from './routes/default';
-import { settingsRoutes } from './routes/settings';
-import { rolesRoutes } from './routes/roles';
-import { formRoutes } from './routes/form';
 
 const app = express();
 
@@ -25,6 +25,5 @@ app.use(rowRoutes)
 app.use(rolesRoutes)
 app.use(formRoutes)
 
-app.listen(process.env.PORT || 3333, () => {
-    console.log('HTTP Server running!');
-});
+export { app };
+
