@@ -1,56 +1,53 @@
-import { PrismaClient, Row } from "@prisma/client";
-import express, { Request, Response } from "express"
+import type { Row } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import type { Request, Response } from "express";
+import express from "express";
 
-export const rowRoutes = express.Router()
+export const rowRoutes = express.Router();
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-rowRoutes.post('/tables/:id/row', async (req: Request, res: Response) => {
+rowRoutes.post("/tables/:id/row", async (req: Request, res: Response) => {
+  const row = await prisma.row.create({
+    data: {
+      value: {
+        ...req.body.data,
+      },
+      tableId: req.params.id,
+    } as Row,
+  });
 
-    const row = await prisma.row.create({
-        data: {
-            value: {
-                ...req.body.data,
-            },
-            tableId: req.params.id
-        } as Row,
+  res.json(row);
+});
 
-    })
+rowRoutes.put("/tables/:id/row", async (req: Request, res: Response) => {
+  const tableId = req.params.id;
+  const id = req.body.id;
 
-    res.json(row);
-})
+  var data = req.body;
+  delete data.id;
 
-rowRoutes.put('/tables/:id/row', async (req: Request, res: Response) => {
+  const row = await prisma.row.update({
+    where: {
+      id: id,
+    },
+    data: {
+      value: data,
+    },
+  });
 
-    const tableId = req.params.id;
-    const id = req.body.id;
+  res.json(row);
+});
 
-    var data = req.body
-    delete data.id
+rowRoutes.delete("/tables/:id/row", async (req: Request, res: Response) => {
+  const tableId = req.params.id;
+  const id = req.body.id;
 
-    const row = await prisma.row.update({
-        where: {
-            id: id
-        },
-        data: {
-            value: data
-        }
-    })
+  const row = await prisma.row.delete({
+    where: {
+      id: id,
+    },
+  });
 
-    res.json(row);
-})
-
-rowRoutes.delete('/tables/:id/row', async (req: Request, res: Response) => {
-
-    const tableId = req.params.id;
-    const id = req.body.id
-
-
-    const row = await prisma.row.delete({
-        where: {
-            id: id
-        },
-    })
-
-    res.json(row);
-})
+  res.json(row);
+});

@@ -1,7 +1,8 @@
-import express, { Request, Response } from "express"
+import type { Request, Response } from "express";
+import express from "express";
 
-export const settingsRoutes = express.Router()
+export const settingsRoutes = express.Router();
 
-settingsRoutes.get('/settings', (req: Request, res: Response) => {
-    res.json({ message: "Settings" });
-})
+settingsRoutes.get("/settings", (req: Request, res: Response) => {
+  res.json({ message: "Settings" });
+});
