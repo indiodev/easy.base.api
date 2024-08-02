@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
 import express from "express";
 
-import { exclude } from "../utils/utils";
+import { exclude } from "../util/validators";
 
 export const userRoutes = express.Router();
 

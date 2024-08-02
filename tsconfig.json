@@ -3,8 +3,10 @@
     "baseUrl": "./",
     "paths": {
       "@config/*": ["./config/*"],
+      "@start/*": ["./start/*"],
+      "@bin/*": ["./bin/*"]
     },		
-		"rootDirs": ["./src"],
+		"rootDirs": ["app"],
 		"target": "ES2022",
 		"module": "commonjs",
 		"rootDir": "./",
@@ -14,5 +16,5 @@
 		"strict": true,
 		"skipLibCheck": true                            /* Skip type checking all .d.ts files. */
   },
-  "include": ["./src/**/*", "./config/**/*"],
+  "include": ["app/**/*", "./config/**/*", "./start/**/*", "./bin/**/*"],
 }

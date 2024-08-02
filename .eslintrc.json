@@ -44,7 +44,11 @@
   "settings": {
     "import/resolver": {
       "alias": {
-        "map": [["@config", "./config"]],
+        "map": [
+          ["@config", "./config"],
+          ["@start", "./start"],
+          ["@bin", "./bin"]
+        ],
         "extensions": [".ts", ".js", ".json"]
       }
     }

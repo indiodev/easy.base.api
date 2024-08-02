@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
 import express from "express";
 
-import { slugify } from "../utils/utils";
+import { slugify } from "../util/validators";
 
 export const tableRoutes = express.Router();
 
