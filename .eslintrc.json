@@ -17,12 +17,6 @@
   "plugins": ["@typescript-eslint", "import", "prettier"],
   "rules": {
     "prettier/prettier": "error",
-    "@typescript-eslint/consistent-type-imports": [
-      "error",
-      {
-        "prefer": "type-imports"
-      }
-    ],
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
@@ -47,7 +41,14 @@
         "map": [
           ["@config", "./config"],
           ["@start", "./start"],
-          ["@bin", "./bin"]
+          ["@bin", "./bin"],
+          ["@database", "./database"],
+          ["@repositories", "./app/repositories"],
+          ["@services", "./app/services"],
+          ["@controllers", "./app/controllers"],
+          ["@factories", "./app/factories"],
+          ["@validators", "./app/validators"],
+          ["@dto", "./app/dto"]
         ],
         "extensions": [".ts", ".js", ".json"]
       }

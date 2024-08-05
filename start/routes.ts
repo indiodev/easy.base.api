@@ -1,4 +1,4 @@
-import { authRoutes } from "../app/routes/auth";
+import { authRoutes } from "../app/routes/auth.route";
 import { defaultRoutes } from "../app/routes/default";
 import { formRoutes } from "../app/routes/form";
 import { rolesRoutes } from "../app/routes/roles";

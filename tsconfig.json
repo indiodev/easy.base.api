@@ -4,17 +4,24 @@
     "paths": {
       "@config/*": ["./config/*"],
       "@start/*": ["./start/*"],
-      "@bin/*": ["./bin/*"]
-    },		
-		"rootDirs": ["app"],
-		"target": "ES2022",
-		"module": "commonjs",
-		"rootDir": "./",
-		"outDir": "./build",
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"skipLibCheck": true                            /* Skip type checking all .d.ts files. */
+      "@bin/*": ["./bin/*"],
+      "@database/*": ["./database/*"],
+      "@repositories/*": ["./app/repositories/*"],
+      "@services/*": ["./app/services/*"],
+      "@controllers/*": ["./app/controllers/*"],
+      "@factories/*": ["./app/factories/*"],
+      "@validators/*": ["./app/validators/*"],
+      "@dto/*": ["./app/dto/*"]
+    },
+    "target": "ES2022",
+    "module": "commonjs",
+    "rootDir": "./",
+    "outDir": "./build",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "rootDirs": ["app"]
   },
-  "include": ["app/**/*", "./config/**/*", "./start/**/*", "./bin/**/*"],
+  "include": ["app/**/*", "./config/**/*", "./start/**/*", "./bin/**/*"]
 }
