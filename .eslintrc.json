@@ -48,7 +48,8 @@
           ["@controllers", "./app/controllers"],
           ["@factories", "./app/factories"],
           ["@validators", "./app/validators"],
-          ["@dto", "./app/dto"]
+          ["@dto", "./app/dto"],
+          ["@util", "./app/util"]
         ],
         "extensions": [".ts", ".js", ".json"]
       }

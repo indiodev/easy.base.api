@@ -11,7 +11,8 @@
       "@controllers/*": ["./app/controllers/*"],
       "@factories/*": ["./app/factories/*"],
       "@validators/*": ["./app/validators/*"],
-      "@dto/*": ["./app/dto/*"]
+      "@dto/*": ["./app/dto/*"],
+      "@util/*": ["./app/util/*"]
     },
     "target": "ES2022",
     "module": "commonjs",
