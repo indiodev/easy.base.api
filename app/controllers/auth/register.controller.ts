@@ -5,7 +5,7 @@ import { AuthRegisterValidator } from "@validators/auth.validator";
 
 export async function Register(
   request: Request,
-  response: Response
+  response: Response,
 ): Promise<Response> {
   const factory = AuthFactory();
   const payload = AuthRegisterValidator.parse(request.body);

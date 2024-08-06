@@ -5,7 +5,7 @@ import { AuthLoginValidator } from "@validators/auth.validator";
 
 export async function Login(
   request: Request,
-  response: Response
+  response: Response,
 ): Promise<Response> {
   const factory = AuthFactory();
   const payload = AuthLoginValidator.parse(request.body);

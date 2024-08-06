@@ -4,10 +4,10 @@ import { List } from "./list.controller";
 import { Show } from "./show.controller";
 import { Update } from "./update.controller";
 
-export const UserController = {
-  Show,
-  List,
+export const FormController = {
+  Create,
   Update,
   Delete,
-  Create,
+  Show,
+  List,
 };

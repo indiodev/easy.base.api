@@ -14,4 +14,16 @@ export class UserRepository {
   async create(args: Prisma.UserCreateArgs): Promise<User> {
     return await this.prisma.user.create(args);
   }
+
+  async findMany(args: Prisma.UserFindManyArgs): Promise<User[]> {
+    return await this.prisma.user.findMany(args);
+  }
+
+  async update(args: Prisma.UserUpdateArgs): Promise<User> {
+    return await this.prisma.user.update(args);
+  }
+
+  async delete(args: Prisma.UserDeleteArgs): Promise<User> {
+    return await this.prisma.user.delete(args);
+  }
 }
