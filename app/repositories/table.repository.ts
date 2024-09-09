@@ -1,7 +1,8 @@
 import { Prisma, PrismaClient, Table } from "@prisma/client";
+import { ObjectId } from "mongodb";
 
 export class TableRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   async findUnique(args: Prisma.TableFindUniqueArgs): Promise<Table | null> {
     return await this.prisma.table.findUnique(args);
@@ -11,8 +12,18 @@ export class TableRepository {
     return await this.prisma.table.findMany(args);
   }
 
-  async create(args: Prisma.TableCreateArgs): Promise<Table> {
-    return await this.prisma.table.create(args);
+  async create(args: any): Promise<Table> { // Temporary any
+
+    return await this.prisma.table.create({
+      data: {
+        // Normal relation
+        ...args.data,
+        // Composite type
+        columns: {
+          set: args.data.columns.create.map((column: any) => ({ ...column, id: new ObjectId().toString() })),
+        },
+      },
+    });
   }
 
   async delete(args: Prisma.TableDeleteArgs): Promise<Table> {

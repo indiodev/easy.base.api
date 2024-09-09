@@ -1,10 +1,24 @@
 import { Prisma, PrismaClient, Row } from "@prisma/client";
+import { ObjectId } from "mongodb";
 
 export class RowRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
-  async create(args: Prisma.RowCreateArgs): Promise<Row> {
-    return await this.prisma.row.create(args);
+  async create(args: any): Promise<any> {
+
+    const rowWithoutTavbleId = { ...args.data, id: new ObjectId().toString() };
+    delete rowWithoutTavbleId.tableId;
+
+    return await this.prisma.table.update({
+      where: {
+        id: args.data.tableId,
+      },
+      data: {
+        rows: {
+          push: rowWithoutTavbleId,
+        },
+      },
+    });
   }
 
   async update(args: Prisma.RowUpdateArgs): Promise<Row> {

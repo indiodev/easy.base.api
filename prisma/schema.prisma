@@ -90,8 +90,8 @@ model Table {
   Form       Form[]
 }
 
-model Column {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+type Column {
+  id         String    @map("_id") @db.ObjectId
   title      String
   identifier String?
   slug       String?
@@ -102,21 +102,15 @@ model Column {
   created_at DateTime  @default(now())
   updated_at DateTime?
   deleted_at DateTime?
-  table      Table?    @relation(fields: [tableId], references: [id])
-  tableId    String?   @db.ObjectId
 }
 
-model Row {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+type Row {
+  id         String    @map("_id") @db.ObjectId
   value      Json?
   config     Json?
-  created_by User?     @relation(fields: [userId], references: [id])
   created_at DateTime  @default(now())
   updated_at DateTime?
   deleted_at DateTime?
-  reviews    Review[]
-  table      Table?    @relation(fields: [tableId], references: [id])
-  tableId    String?   @db.ObjectId
   userId     String?   @db.ObjectId
 }
 
@@ -129,7 +123,6 @@ model Review {
   updated_at DateTime?
   deleted_at DateTime?
   created_by User?     @relation(fields: [userId], references: [id])
-  row        Row?      @relation(fields: [rowId], references: [id])
   rowId      String?   @db.ObjectId
   userId     String?   @db.ObjectId
 }
