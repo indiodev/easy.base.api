@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Row } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { ObjectId } from "mongodb";
 
 export class RowRepository {
@@ -21,17 +21,59 @@ export class RowRepository {
     });
   }
 
-  async update(args: Prisma.RowUpdateArgs): Promise<Row> {
-    return await this.prisma.row.update(args);
+  async update(args: any): Promise<any> {
+
+    const rowWithoutTavbleId = { ...args.data };
+    delete rowWithoutTavbleId.tableId;
+
+    return await this.prisma.table.update({
+      where: {
+        id: args.data.tableId,
+      },
+      data: {
+        rows: {
+          updateMany: {
+            where: {
+              id: args.data.id,
+            },
+            data: rowWithoutTavbleId,
+          },
+        },
+      },
+    });
   }
 
-  async delete(args: Prisma.RowDeleteArgs): Promise<Row> {
-    return await this.prisma.row.delete(args);
+  async delete(args: any): Promise<any> {
+    
+    return await this.prisma.table.update({
+      where: {
+        id: args.data.tableId,
+      },
+      data: {
+        rows: {
+          delete: {
+            where: {
+              id: args.data.id,
+            },
+          },
+        },
+      },
+    });
+
   }
 
-  async deleteMany(
-    args: Prisma.RowDeleteManyArgs,
-  ): Promise<Prisma.BatchPayload> {
-    return await this.prisma.row.deleteMany(args);
+  async deleteMany(args: any): Promise<any> {
+    return await this.prisma.table.update({
+      where: {
+        id: args.data.tableId,
+      },
+      data: {
+        rows: {
+          deleteMany: {
+            in: args.data.ids,
+          },
+        },
+      },
+    });
   }
 }
