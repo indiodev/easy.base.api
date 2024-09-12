@@ -51,7 +51,7 @@ export class RowRepository {
       },
       data: {
         rows: {
-          delete: {
+          deleteMany: { // Composite types no supported in deleteMany as WhereIn 
             where: {
               id: args.data.id,
             },
@@ -63,17 +63,19 @@ export class RowRepository {
   }
 
   async deleteMany(args: any): Promise<any> {
-    return await this.prisma.table.update({
-      where: {
-        id: args.data.tableId,
-      },
-      data: {
-        rows: {
-          deleteMany: {
-            in: args.data.ids,
-          },
-        },
-      },
-    });
+    // Composite types not supported in deleteMany
+    // 
+    // return await this.prisma.table.update({
+    //   where: {
+    //     id: args.data.tableId,
+    //   },
+    //   data: {
+    //     rows: {
+    //       deleteMany: {
+    //         id: args.data.ids,
+    //       },
+    //     },
+    //   },
+    // });
   }
 }
