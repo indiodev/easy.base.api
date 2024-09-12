@@ -8,11 +8,13 @@ export async function Update(
 ): Promise<Response> {
   const factory = RowFactory();
   const id = request.body.id;
+  const tableId = request.params.id;
   const payload = request.body.data;
   delete payload.id;
 
   const result = await factory.update({
     id,
+    tableId,
     ...payload,
   });
   return response.status(200).json(result);

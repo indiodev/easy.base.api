@@ -8,6 +8,9 @@ export async function Delete(
 ): Promise<Response> {
   const factory = RowFactory();
   const id = request.body.id;
-  const result = await factory.delete(id);
+  const result = await factory.create({
+    tableId: request.params.id,
+    id
+  });
   return response.status(200).json(result);
 }
