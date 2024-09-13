@@ -15,10 +15,6 @@ export class TableService {
   async show(id: string): Promise<Table> {
     const table = await this.tableRepository.findUnique({
       where: { id },
-      include: {
-        columns: true,
-        rows: true,
-      },
     });
 
     if (!table) throw new Error("Tabela não encontrada.");
@@ -28,10 +24,6 @@ export class TableService {
 
   async list(): Promise<Table[]> {
     return await this.tableRepository.findMany({
-      include: {
-        columns: true,
-        rows: true,
-      },
     });
   }
 
@@ -63,8 +55,9 @@ export class TableService {
         identifier: payload.title,
         title: payload.title,
         columns: {
-          update: payload.columns?.map((column: any) => {
+          set: payload.columns?.map((column: any) => {
             return {
+              id: column.id,
               title: column.title,
               type: column.type,
               slug: slugify(column.title),
@@ -83,11 +76,6 @@ export class TableService {
       },
     });
 
-    await this.columnRepository.deleteMany({
-      where: {
-        tableId: id,
-      },
-    });
 
     return await this.tableRepository.delete({
       where: {
