@@ -27,6 +27,17 @@ export class TableService {
     });
   }
 
+  async filter(payload: any): Promise<Table[]> {
+    return await this.tableRepository.findMany({
+      where: {
+        id: payload.id,
+        rows: {
+          some: payload.filters,
+        }
+      }
+    });
+  }
+
   async create(payload: any): Promise<Table> {
     return await this.tableRepository.create({
       data: {
