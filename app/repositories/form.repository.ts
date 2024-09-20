@@ -1,29 +1,39 @@
-import { Form, Prisma, PrismaClient } from "@prisma/client";
+import { Model } from 'mongoose';
+import { FormDocument, Models } from '@config/mongoose/schema';
+const { Form } = Models;
+type FormType = typeof Form;
 
 export class FormRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private formModel: Model<FormDocument>) {} // Model do Mongoose injetado
 
-  async create(args: Prisma.FormCreateArgs): Promise<Form> {
-    return await this.prisma.form.create(args);
+  // Método para criar um novo formulário
+  async create(data: Partial<FormType>): Promise<FormDocument> {
+    const newForm = new this.formModel(data);
+    return await newForm.save(); // Salva no MongoDB
   }
 
-  async findMany(args: Prisma.FormFindManyArgs): Promise<Form[]> {
-    return await this.prisma.form.findMany(args);
+  // Método para encontrar múltiplos formulários
+  async findMany(filter: any = {}): Promise<FormDocument[]> {
+    return await this.formModel.find(filter).exec(); // Retorna uma lista de formulários
   }
 
-  async findUnique(args: Prisma.FormFindUniqueArgs): Promise<Form | null> {
-    return await this.prisma.form.findUnique(args);
+  // Método para encontrar um formulário por ID ou outra condição única
+  async findUnique(filter: any): Promise<FormDocument | null> {
+    return await this.formModel.findOne(filter).exec(); // Encontra um formulário único baseado no filtro
   }
 
-  async findFirst(args: Prisma.FormFindFirstArgs): Promise<Form | null> {
-    return await this.prisma.form.findFirst(args);
+  // Método para encontrar o primeiro formulário que satisfaz a condição
+  async findFirst(filter: any): Promise<FormDocument | null> {
+    return await this.formModel.findOne(filter).exec(); // Similar ao findUnique em Mongoose
   }
 
-  async update(args: Prisma.FormUpdateArgs): Promise<Form> {
-    return await this.prisma.form.update(args);
+  // Método para atualizar um formulário por ID
+  async update(id: string, data: Partial<FormType>): Promise<FormDocument | null> {
+    return await this.formModel.findByIdAndUpdate(id, data, { new: true }).exec(); // Retorna o formulário atualizado
   }
 
-  async delete(args: Prisma.FormDeleteArgs): Promise<Form> {
-    return await this.prisma.form.delete(args);
+  // Método para excluir um formulário por ID
+  async delete(id: string): Promise<FormDocument | null> {
+    return await this.formModel.findByIdAndDelete(id).exec(); // Remove e retorna o formulário excluído
   }
 }
