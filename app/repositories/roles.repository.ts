@@ -1,9 +1,11 @@
-import { PrismaClient, Role } from "@prisma/client";
+import { Model } from 'mongoose';
+import { RoleDocument } from "@config/mongoose/schema"; // Importando o modelo Role
 
 export class RoleRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private roleModel: Model<RoleDocument>) {}
 
-  async findMany(): Promise<Role[]> {
-    return await this.prisma.role.findMany();
+  // Método para buscar múltiplos roles
+  async findMany(): Promise<RoleDocument[]> {
+    return await this.roleModel.find().exec(); // `find` retorna todos os registros
   }
 }
