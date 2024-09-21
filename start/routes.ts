@@ -6,6 +6,7 @@ import { rowRoutes } from "../app/routes/row.route";
 import { settingsRoutes } from "../app/routes/settings.route";
 import { tableRoutes } from "../app/routes/table.route";
 import { userRoutes } from "../app/routes/user.route";
+import { columnRoutes } from "../app/routes/column.route";
 
 import { app } from "./kernel";
 
@@ -17,5 +18,6 @@ app.use(formRoutes);
 app.use(userRoutes);
 app.use(rowRoutes);
 app.use(rolesRoutes);
+app.use(columnRoutes);
 
 export { app as router };
