@@ -1,81 +1,60 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { ObjectId } from "mongodb";
+import mongoose, { Model, Types } from "mongoose";
+import { TableDocument } from "@config/mongoose/schema"; // Importar o modelo de tabela
+import { Env } from "@config/env";
 
 export class RowRepository {
-  constructor(private prisma: PrismaClient) { }
-
-  async create(args: any): Promise<any> {
-
-    const rowWithoutTavbleId = { ...args.data, id: new ObjectId().toString() };
-    delete rowWithoutTavbleId.tableId;
-
-    return await this.prisma.table.update({
-      where: {
-        id: args.data.tableId,
-      },
-      data: {
-        rows: {
-          push: rowWithoutTavbleId,
-        },
-      },
-    });
+  constructor(private tableModel: Model<TableDocument>) {
+    mongoose.connect(Env.DATABASE_URL)
+    .then(() => console.log('Connected!'));
   }
 
-  async update(args: any): Promise<any> {
+  // Criar uma nova linha associada a uma tabela
+  async create(args: any): Promise<TableDocument | null> {
+    const rowWithoutTableId = { ...args.data, _id: new Types.ObjectId() }; // Gerar um novo ObjectId para a linha
+    delete rowWithoutTableId.tableId; // Remover o campo tableId
 
-    const rowWithoutTavbleId = { ...args.data };
-    delete rowWithoutTavbleId.tableId;
-
-    return await this.prisma.table.update({
-      where: {
-        id: args.data.tableId,
+    return await this.tableModel.findByIdAndUpdate(
+      args.data.tableId,
+      {
+        $push: { rows: rowWithoutTableId }, // Adicionar a nova linha ao array de rows
       },
-      data: {
-        rows: {
-          updateMany: {
-            where: {
-              id: args.data.id,
-            },
-            data: rowWithoutTavbleId,
-          },
-        },
-      },
-    });
+      { new: true } // Retornar o documento atualizado
+    ).exec();
   }
 
-  async delete(args: any): Promise<any> {
-    
-    return await this.prisma.table.update({
-      where: {
-        id: args.data.tableId,
-      },
-      data: {
-        rows: {
-          deleteMany: { // Composite types no supported in deleteMany as WhereIn 
-            where: {
-              id: args.data.id,
-            },
-          },
-        },
-      },
-    });
+  // Atualizar uma linha existente
+  async update(args: any): Promise<TableDocument | null> {
+    const rowWithoutTableId = { ...args.data };
+    delete rowWithoutTableId.tableId; // Remover o campo tableId
 
+    return await this.tableModel.findOneAndUpdate(
+      { _id: args.data.tableId, "rows._id": args.data.id }, // Filtrar pela tabela e linha
+      {
+        $set: { "rows.$": rowWithoutTableId }, // Atualizar a linha correspondente
+      },
+      { new: true } // Retornar o documento atualizado
+    ).exec();
   }
 
-  async deleteMany(args: any): Promise<any> {
-    // Composite types not supported in deleteMany
-    // 
-    // return await this.prisma.table.update({
-    //   where: {
-    //     id: args.data.tableId,
-    //   },
-    //   data: {
-    //     rows: {
-    //       deleteMany: {
-    //         id: args.data.ids,
-    //       },
-    //     },
-    //   },
-    // });
+  // Deletar uma linha existente
+  async delete(args: any): Promise<TableDocument | null> {
+    return await this.tableModel.findByIdAndUpdate(
+      args.data.tableId,
+      {
+        $pull: { rows: { _id: args.data.id } }, // Remover a linha com o id fornecido
+      },
+      { new: true } // Retornar o documento atualizado
+    ).exec();
+  }
+
+  // Deletar múltiplas linhas
+  async deleteMany(args: any): Promise<TableDocument | null> {
+    return await this.tableModel.findByIdAndUpdate(
+      args.data.tableId,
+      {
+        $pull: { rows: { _id: { $in: args.data.ids } } }, // Remover múltiplas linhas com base nos IDs
+      },
+      { new: true } // Retornar o documento atualizado
+    ).exec();
   }
 }

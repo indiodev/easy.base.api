@@ -1,10 +1,14 @@
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { FormDocument, Models } from '@config/mongoose/schema';
+import { Env } from '@config/env';
 const { Form } = Models;
 type FormType = typeof Form;
 
 export class FormRepository {
-  constructor(private formModel: Model<FormDocument>) {} // Model do Mongoose injetado
+  constructor(private formModel: Model<FormDocument>) {
+    mongoose.connect(Env.DATABASE_URL)
+    .then(() => console.log('Connected!'));
+  } // Model do Mongoose injetado
 
   // Método para criar um novo formulário
   async create(data: Partial<FormType>): Promise<FormDocument> {

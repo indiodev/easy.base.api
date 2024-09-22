@@ -1,9 +1,10 @@
 import mongoose, { mongo } from "mongoose";
 import { Models } from "@config/mongoose/schema";
+import { Env } from "@config/env";
 
 export class ColumnRepository {
   constructor(table: any) {
-    mongoose.connect('mongodb://127.0.0.1:27017/test')
+    mongoose.connect(Env.DATABASE_URL)
     .then(() => console.log('Connected!'));
   }
 
