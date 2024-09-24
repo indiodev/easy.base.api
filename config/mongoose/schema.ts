@@ -68,23 +68,6 @@ const UserSchema = new Schema({
   forms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }]
 });
 
-// Table Schema
-const TableSchema = new Schema({
-  _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
-  title: { type: String, required: true },
-  identifier: { type: String, required: true },
-  rows: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Row' }],
-  columns: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Column' }],
-  config: { type: Schema.Types.Mixed },
-  category: { type: String },
-  status: { type: String },
-  created_at: { type: Date, default: Date.now },
-  updated_at: { type: Date },
-  deleted_at: { type: Date },
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  forms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }]
-});
-
 // Column Type
 const ColumnSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
@@ -150,18 +133,36 @@ const FormSubmissionsSchema = new Schema({
   content: { type: String, required: true }
 });
 
+// Table Schema
+const TableSchema = new Schema({
+  _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+  title: { type: String, required: true },
+  identifier: { type: String, required: true },
+  rows: [ RowSchema ],
+  columns: [ ColumnSchema ],
+  config: { type: Schema.Types.Mixed },
+  category: { type: String },
+  status: { type: String },
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date },
+  deleted_at: { type: Date },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  forms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }]
+});
+
+
 // Models
-const Role = mongoose.model<RoleDocument>('Role', RoleSchema);
-const Setting = mongoose.model('Setting', SettingSchema);
-const Permission = mongoose.model<PermissionDocument>('Permission', PermissionSchema);
-const Group = mongoose.model<GroupDocument>('Group', GroupSchema);
-const User = mongoose.model<UserDocument>('User', UserSchema);
-const Table = mongoose.model<TableDocument>('Table', TableSchema);
-const Column = mongoose.model<ColumnDocument>('Column', ColumnSchema);
-const Row = mongoose.model<RowDocument>('Row', RowSchema);
-const Review = mongoose.model<ReviewDocument>('Review', ReviewSchema);
-const Form = mongoose.model<FormDocument>('Form', FormSchema);
-const FormSubmissions = mongoose.model<FormSubmissionsDocument>('FormSubmissions', FormSubmissionsSchema);
+const Role = mongoose.model<RoleDocument>('Role', RoleSchema, 'Role');
+const Setting = mongoose.model('Setting', SettingSchema, 'Setting');
+const Permission = mongoose.model<PermissionDocument>('Permission', PermissionSchema, 'Permission');
+const Group = mongoose.model<GroupDocument>('Group', GroupSchema, 'Group');
+const User = mongoose.model<UserDocument>('User', UserSchema, "User");
+const Table = mongoose.model<TableDocument>('Table', TableSchema, 'Table');
+const Column = mongoose.model<ColumnDocument>('Column', ColumnSchema, 'Column');
+const Row = mongoose.model<RowDocument>('Row', RowSchema, 'Row');
+const Review = mongoose.model<ReviewDocument>('Review', ReviewSchema, 'Review');
+const Form = mongoose.model<FormDocument>('Form', FormSchema, 'Form');
+const FormSubmissions = mongoose.model<FormSubmissionsDocument>('FormSubmissions', FormSubmissionsSchema, 'FormSubmissions');
 
 export interface RoleDocument extends Document {
   role: keyof typeof UserRole;
@@ -189,23 +190,23 @@ export interface UserDocument extends Document {
   name: string;
   email: string;
   password: string;
-  group: Schema.Types.ObjectId;
-  tables: Schema.Types.ObjectId[];
+  group?: Schema.Types.ObjectId;
+  tables?: Schema.Types.ObjectId[];
   status?: string;
-  created_at: Date;
+  created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date;
-  reviews: Schema.Types.ObjectId[];
-  rows: Schema.Types.ObjectId[];
-  role: Schema.Types.ObjectId;
-  formIds: Schema.Types.ObjectId[];
+  reviews?: Schema.Types.ObjectId[];
+  rows?: Schema.Types.ObjectId[];
+  role?: Schema.Types.ObjectId;
+  formIds?: Schema.Types.ObjectId[];
 }
 
 export interface TableDocument extends mongoose.Document {
   title: string;
   identifier: string;
-  rows: Schema.Types.ObjectId[];
-  columns: Schema.Types.ObjectId[];
+  rows: RowDocument[];
+  columns: ColumnDocument[];
   config?: any;
   category?: string;
   status?: string;
