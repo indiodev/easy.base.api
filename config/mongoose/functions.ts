@@ -27,3 +27,17 @@ export default createDynamicModel;
 // const DynamicModel = createDynamicModel(collectionName, schemaDefinition);
 
 // const newDocument = await new DynamicModel(documentData).save();
+
+//  Example data
+//  {
+//     "collectionName": "Products",
+//     "schemaDefinition": {
+//       "name": { "type": "String", "required": true },
+//       "price": { "type": "Number", "required": true },
+//       "inStock": { "type": "Boolean", "default": true }
+//     },
+//     "documentData": {
+//       "name": "Notebook",
+//       "price": 1500
+//     }
+//   }
