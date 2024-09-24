@@ -1,7 +1,11 @@
 import cors from "cors";
 import express from "express";
+import connectDatabase from "@config/mongoose/connect";
 
 const app = express();
+
+
+connectDatabase()
 
 app.use(cors({
     origin: 'http://localhost:3000',
