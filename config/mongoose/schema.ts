@@ -141,13 +141,14 @@ const TableSchema = new Schema({
   rows: [ RowSchema ],
   columns: [ ColumnSchema ],
   config: { type: Schema.Types.Mixed },
+  schema: { type: Schema.Types.Mixed },
+  data_collection: { type: String },
   category: { type: String },
   status: { type: String },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
   deleted_at: { type: Date },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  forms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }]
 });
 
 
@@ -202,19 +203,20 @@ export interface UserDocument extends Document {
   formIds?: Schema.Types.ObjectId[];
 }
 
-export interface TableDocument extends mongoose.Document {
+export interface TableDocument extends Document {
   title: string;
   identifier: string;
-  rows: RowDocument[];
+  rows: any[] | RowDocument[];
   columns: ColumnDocument[];
+  schema?: Schema.Types.Mixed;
   config?: any;
   category?: string;
+  data_collection?: string;
   status?: string;
   created_at: Date;
   updated_at?: Date;
   deleted_at?: Date;
   owner: Schema.Types.ObjectId;
-  forms: Schema.Types.ObjectId[];
 }
 
 export interface ColumnDocument extends Document {
