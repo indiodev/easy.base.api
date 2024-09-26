@@ -1,12 +1,22 @@
 import mongoose, { Model, Types } from "mongoose";
 import { Models, TableDocument } from "@config/mongoose/schema"; // Importando o modelo Mongoose
 import { Env } from "@config/env";
+import createDynamicModel, { generateCollectionName, getColumnDataType } from "@config/mongoose/functions";
 
 export class TableRepository {
  
-  // Encontrar um único documento por ID ou qualquer outro critério
+  // Encontrar um único documento por ID ou qualquer outro critério 
+  // WIP - Work in progress
   async findUnique(filter: any): Promise<TableDocument | null> {
-    return await Models.Table.findOne(filter).exec();
+    const table = await Models.Table.findOne(filter).exec();
+
+    if(table){
+      const CollectionModal = createDynamicModel(table.data_collection!, table.schema);
+      const rows = await CollectionModal.find().exec();
+      table.rows = rows.map((row: any) => ({ _id: row._id, value: row, created_at: row.created_at, updated_at: row.updated_at }));
+    }
+
+    return table;
   }
 
   // Encontrar múltiplos documentos com base em um filtro
@@ -15,11 +25,24 @@ export class TableRepository {
   }
 
   // Criar um novo documento na coleção Table
-  async create(args: any): Promise<TableDocument> {
+  async create(args: any): Promise<TableDocument | null> {
     const { columns, ...rest } = args.data;
+
+    const collectionName = await generateCollectionName(rest.identifier);
+   
+    const schemaDefinition = columns.create
+      .map((item: any) => ({
+        [item.slug]: {
+          type: getColumnDataType(item.type),
+          required: item.config?.required || false,
+        }
+      }))
+      .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {});
 
     const newTable = new Models.Table({
       ...rest,
+      data_collection: collectionName, 
+      schema: schemaDefinition,
       // Relacionamento com as colunas
       columns: columns.create.map((column: any) => ({
         ...column,
