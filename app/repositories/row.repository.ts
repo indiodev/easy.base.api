@@ -1,6 +1,7 @@
 import mongoose, { Model, Types } from "mongoose";
-import { TableDocument } from "@config/mongoose/schema"; // Importar o modelo de tabela
+import { TableDocument, Models } from "@config/mongoose/schema"; // Importar o modelo de tabela
 import { Env } from "@config/env";
+import createDynamicModel from "@config/mongoose/functions";
 
 export class RowRepository {
   constructor(private tableModel: Model<TableDocument>) {
@@ -9,17 +10,30 @@ export class RowRepository {
   }
 
   // Criar uma nova linha associada a uma tabela
-  async create(args: any): Promise<TableDocument | null> {
-    const rowWithoutTableId = { ...args.data, _id: new Types.ObjectId() }; // Gerar um novo ObjectId para a linha
+  async create(args: any): Promise<any | null> {
+    const rowWithoutTableId = { ...args.data.value, _id: new Types.ObjectId() }; // Gerar um novo ObjectId para a linha
     delete rowWithoutTableId.tableId; // Remover o campo tableId
 
-    return await this.tableModel.findByIdAndUpdate(
-      args.data.tableId,
-      {
-        $push: { rows: rowWithoutTableId }, // Adicionar a nova linha ao array de rows
-      },
-      { new: true } // Retornar o documento atualizado
-    ).exec();
+    // Encontrar a tabela pelo tableId
+    const table = await Models.Table.findById(args.data.tableId).exec();
+    if (!table) {
+      throw new Error("Table not found");
+    }
+
+    const collectionName = table.data_collection;
+
+    if (!collectionName) {
+      throw new Error("Collection name not found");
+    }
+
+    // Gerar o esquema com a função criada anteriormente
+    const schema = table.schema;
+
+    // Criar um novo modelo com o esquema gerado
+    const CollectionModel = createDynamicModel(collectionName, schema);
+
+    // Adicionar a nova linha ao modelo
+    return await CollectionModel.create(rowWithoutTableId);
   }
 
   // Atualizar uma linha existente
