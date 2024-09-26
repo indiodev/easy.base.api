@@ -19,9 +19,6 @@ export class TableService {
 
     if (!table) throw new Error("Tabela não encontrada.");
 
-    console.log(table)
-
-
     return table;
   }
 
