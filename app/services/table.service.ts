@@ -35,8 +35,8 @@ export class TableService {
     return tables
   }
 
-  async create(payload: any): Promise<Table> {
-    return await this.tableRepository.create({
+  async create(payload: any): Promise<Table > {
+    const createdTable = await this.tableRepository.create({
       data: {
         identifier: payload.title,
         title: payload.title,
@@ -52,14 +52,24 @@ export class TableService {
         },
       },
     });
+
+    if (!createdTable) throw new Error("Failed to create table.");
+
+    return createdTable;
   }
 
   async update(payload: any): Promise<Table | null> {
-    return await this.tableRepository.update(payload.id, {
-        identifier: payload.title,
-        title: payload.title,
+
+    const payloudWithoutColumns = payload
+    const payloadColumns = payload.columns
+    delete payloudWithoutColumns.columns
+    delete payloudWithoutColumns.id
+    delete payloudWithoutColumns.rows
+
+    return await this.tableRepository.update(payload._id, {
+        ...payloudWithoutColumns,
         columns: {
-          set: payload.columns?.map((column: any) => {
+          set: payloadColumns?.map((column: any) => {
             return {
               id: column.id,
               title: column.title,
@@ -74,9 +84,7 @@ export class TableService {
 
   async delete(id: string): Promise<Table | null> {
     await this.rowRepository.deleteMany({
-      where: {
-        tableId: id,
-      },
+      tableId: id,
     });
 
     return await this.tableRepository.delete(id);

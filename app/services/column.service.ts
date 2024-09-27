@@ -1,9 +1,10 @@
-import { Column } from "@prisma/client";
+import { ColumnDocument as Column } from "@config/mongoose/schema";
 import { ObjectId } from "mongodb";
 
 import { ApplicationException } from "@exceptions/application.exception";
 import { TableRepository } from "@repositories/table.repository";
 import { slugify } from "@util/validators";
+import { Schema } from "mongoose";
 
 export class ColumnService {
   constructor(private tableRepository: TableRepository) {}
@@ -12,11 +13,8 @@ export class ColumnService {
     tableId: string;
     column: Partial<Column>;
   }): Promise<void> {
-    const table = await this.tableRepository.findUnique({
-      where: {
-        id: payload.tableId,
-      },
-    });
+
+    const table = await this.tableRepository.findUnique({_id: payload.tableId});
 
     const column = {
       id: new ObjectId().toString(),
@@ -27,8 +25,8 @@ export class ColumnService {
     };
 
     const old =
-      table?.columns?.map(({ id, title, type, slug, config }) => ({
-        id,
+      table?.columns?.map(({ _id, title, type, slug, config }) => ({
+        _id,
         title,
         type,
         slug,
@@ -44,16 +42,12 @@ export class ColumnService {
         cause: "COLUMN_ALREADY_EXISTS",
       });
 
-    await this.tableRepository.update({
-      where: {
-        id: payload.tableId,
-      },
-      data: {
-        columns: {
-          set: [...old, column],
-        },
-      },
-    });
+    await this.tableRepository.update(
+      payload.tableId,
+      {
+        columns: [...old, column],
+      }
+    );
   }
 
   async update(payload: { tableId: string; column: Partial<Column> }) {
@@ -63,7 +57,7 @@ export class ColumnService {
       },
     });
 
-    const exist = table?.columns?.find((c) => c.id === payload.column.id);
+    const exist = table?.columns?.find((c) => c._id === payload.column._id);
 
     if (!exist)
       throw new ApplicationException({
@@ -73,7 +67,7 @@ export class ColumnService {
       });
 
     const columns = table?.columns.map((c) => {
-      if (c.id === payload?.column?.id)
+      if (c._id === payload?.column?._id)
         return {
           ...c,
           ...payload.column,
@@ -82,24 +76,16 @@ export class ColumnService {
       return c;
     });
 
-    await this.tableRepository.update({
-      where: {
-        id: payload.tableId,
-      },
-      data: {
-        columns: {
-          set: columns,
-        },
-      },
-    });
+    await this.tableRepository.update(
+      payload.tableId,
+      {
+        columns
+      }
+    );
   }
 
-  async show(query: { tableId: string; columnId: string }): Promise<Column> {
-    const table = await this.tableRepository.findUnique({
-      where: {
-        id: query.tableId,
-      },
-    });
+  async show(query: { tableId: string; columnId: Schema.Types.ObjectId }): Promise<Column> {
+    const table = await this.tableRepository.findUnique({_id: query.tableId});
 
     if (!table)
       throw new ApplicationException({
@@ -108,7 +94,7 @@ export class ColumnService {
         cause: "TABLE_NOT_FOUND",
       });
 
-    const column = table.columns.find((column) => column.id === query.columnId);
+    const column = table.columns.find((column) => column._id === query.columnId);
 
     if (!column)
       throw new ApplicationException({
@@ -121,9 +107,7 @@ export class ColumnService {
   }
 
   async findManyByTableId(tableId: string): Promise<Partial<Column>[]> {
-    const table = await this.tableRepository.findUnique({
-      where: { id: tableId },
-    });
+    const table = await this.tableRepository.findUnique({_id: tableId});
 
     if (!table) throw new Error("Tabela não encontrada.");
 
