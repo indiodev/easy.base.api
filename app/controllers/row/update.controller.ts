@@ -5,19 +5,19 @@ export async function Update(
   request: Request,
   response: Response,
 ): Promise<Response> {
-  // const factory = RowFactory();
-  // const id = request.body.id;
-  // const tableId = request.params.id;
-  // const payload = request.body.data;
-  // delete payload.id;
 
-  console.log(request.body)
+  const factory = RowFactory();
+  const id  = request.body._id; // row id
+  const tableId = request.params.id; // table id
+  const data = request.body
 
-  // const result = await factory.update({
-  //   id,
-  //   tableId,
-  //   ...payload,
-  // });
-  const result = null;
+  delete data._id;
+
+  const result = await factory.update({
+    id,
+    tableId,
+    ...data
+  });
+  
   return response.status(200).json(result);
 }
