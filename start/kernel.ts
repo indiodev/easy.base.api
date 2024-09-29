@@ -10,7 +10,7 @@ connectDatabase()
 app.use(cors({
     origin: 'http://localhost:3000',
     methods: '*',
-    credentials: true,
+    credentials: false,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

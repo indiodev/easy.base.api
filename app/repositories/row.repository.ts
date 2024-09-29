@@ -1,74 +1,88 @@
 import mongoose, { Model, Types } from "mongoose";
-import { TableDocument, Models } from "@config/mongoose/schema"; // Importar o modelo de tabela
+import { TableDocument, Models } from "@config/mongoose/schema"; 
 import { Env } from "@config/env";
 import createDynamicModel from "@config/mongoose/functions";
 
+export interface IRowRepository{
+  data?: {
+    value: any,
+  },
+  id?: string,
+  tableId: string
+} 
+
 export class RowRepository {
-  constructor(private tableModel: Model<TableDocument>) {
-    mongoose.connect(Env.DATABASE_URL)
-    .then(() => console.log('Connected!'));
-  }
 
-  // Criar uma nova linha associada a uma tabela
-  async create(args: any): Promise<any | null> {
-    const rowWithoutTableId = { ...args.data.value, _id: new Types.ObjectId() }; // Gerar um novo ObjectId para a linha
-    delete rowWithoutTableId.tableId; // Remover o campo tableId
+  async create(args: IRowRepository): Promise<any | null> {
+    const rowWithoutTableId = { ...args.data!.value, _id: new Types.ObjectId() }; 
+    delete rowWithoutTableId.tableId; 
 
-    // Encontrar a tabela pelo tableId
-    const table = await Models.Table.findById(args.data.tableId).exec();
+    const table = await Models.Table.findById(args.tableId).exec();
     if (!table) {
       throw new Error("Table not found");
     }
 
-    const collectionName = table.data_collection;
+    const CollectionModel = this.getCollectionModel(table);
 
-    if (!collectionName) {
-      throw new Error("Collection name not found");
-    }
-
-    // Gerar o esquema com a função criada anteriormente
-    const schema = table.schema;
-
-    // Criar um novo modelo com o esquema gerado
-    const CollectionModel = createDynamicModel(collectionName, schema);
-
-    // Adicionar a nova linha ao modelo
     return await CollectionModel.create(rowWithoutTableId);
   }
 
-  // Atualizar uma linha existente
-  async update(args: any): Promise<TableDocument | null> {
-    const rowWithoutTableId = { ...args.data };
-    delete rowWithoutTableId.tableId; // Remover o campo tableId
+  async update(args: IRowRepository): Promise<any | null> {
+    console.log(args)
+    const rowWithoutTableId = { ...args.data?.value };
+    
+    const table = await Models.Table.findById(args.tableId).exec();
+    if (!table) {
+      throw new Error("Table not found");
+    }
 
-    return await this.tableModel.findOneAndUpdate(
-      { _id: args.data.tableId, "rows._id": args.data.id }, // Filtrar pela tabela e linha
-      {
-        $set: { "rows.$": rowWithoutTableId }, // Atualizar a linha correspondente
-      },
-      { new: true } // Retornar o documento atualizado
+    const CollectionModel = this.getCollectionModel(table);
+
+    return await CollectionModel.findByIdAndUpdate(
+      args.id,
+      rowWithoutTableId,
+      { new: true } 
     ).exec();
+
   }
 
-  // Deletar uma linha existente
-  async delete(args: any): Promise<TableDocument | null> {
-    return await this.tableModel.findByIdAndUpdate(
-      args.data.tableId,
-      {
-        $pull: { rows: { _id: args.data.id } }, // Remover a linha com o id fornecido
-      },
-      { new: true } // Retornar o documento atualizado
-    ).exec();
+  async delete(args: IRowRepository): Promise<any | null> {
+    const table = await Models.Table.findById(args.tableId).exec();
+    if (!table) {
+      throw new Error("Table not found");
+    }
+
+    const CollectionModel = this.getCollectionModel(table);
+
+    return await CollectionModel.findByIdAndDelete(args.id).exec();
   }
 
-  // Deletar múltiplas linhas
-  async deleteMany(args: any): Promise<TableDocument | null> {
-    return await this.tableModel.findByIdAndUpdate(
-      args.data.tableId,
-      {
-        $pull: { rows: { _id: { $in: args.data.ids } } }, // Remover múltiplas linhas com base nos IDs
-      },
-      { new: true } // Retornar o documento atualizado
-    ).exec();
+  async deleteMany(args: IRowRepository): Promise<any | null> {
+
+    const table = await Models.Table.findById(args.tableId).exec();
+    if (!table) {
+      throw new Error("Table not found");
+    }
+
+    const CollectionModel = this.getCollectionModel(table);
+
+    return await CollectionModel.deleteMany(args.data).exec();
   }
+  
+  private getCollectionModel(table: TableDocument): Model<mongoose.Document> {
+        
+    const collectionName = table.data_collection;
+    if (!collectionName) {
+      throw new Error("Collection name not found");
+    }
+  
+    const schema = table.schema;
+    if (!schema) {
+      throw new Error("Collection schema not found");
+    }
+
+    return createDynamicModel(collectionName, schema) as Model<mongoose.Document>;
+  }
+
+  
 }

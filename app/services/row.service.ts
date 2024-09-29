@@ -9,27 +9,25 @@ export class RowService {
     return await this.rowRepository.create({
       data: {
         value: { ...payload },
-        tableId,
       },
+      tableId,
     });
   }
 
-  async delete(id: string): Promise<Row> {
+  async delete({ tableId, id }: any): Promise<Row> {
     return await this.rowRepository.delete({
-      where: {
-        id,
-      },
+      id,
+      tableId
     });
   }
 
-  async update({ id, ...payload }: any): Promise<Row> {
+  async update({ tableId, id, ...payload }: any): Promise<Row> {
     return await this.rowRepository.update({
-      where: {
-        id,
-      },
       data: {
-        value: payload,
+        value: { ...payload },
       },
+      tableId,
+      id: id,
     });
   }
 }
