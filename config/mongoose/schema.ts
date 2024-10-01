@@ -220,6 +220,7 @@ export interface TableDocument extends Document {
 }
 
 export interface ColumnDocument extends Document {
+  _id: Schema.Types.ObjectId;
   title: string;
   identifier?: string;
   slug?: string;
