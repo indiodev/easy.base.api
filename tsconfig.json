@@ -12,7 +12,10 @@
       "@factories/*": ["./app/factories/*"],
       "@validators/*": ["./app/validators/*"],
       "@dto/*": ["./app/dto/*"],
-      "@util/*": ["./app/util/*"]
+      "@util/*": ["./app/util/*"],
+      "@exceptions/*": ["./app/exceptions/*"],
+      "@providers/*": ["./app/providers/*"],
+      "@middleware/*": ["./app/middleware/*"]
     },
     "target": "ES2022",
     "module": "commonjs",
