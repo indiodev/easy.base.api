@@ -1,19 +1,23 @@
 import { Request, Response } from "express";
-
 import { RowFactory } from "@factories/row.factory";
 
 export async function Update(
   request: Request,
   response: Response,
 ): Promise<Response> {
+
   const factory = RowFactory();
-  const id = request.body.id;
-  const payload = request.body.data;
-  delete payload.id;
+  const id  = request.body._id; // row id
+  const tableId = request.params.id; // table id
+  const data = request.body
+
+  delete data._id;
 
   const result = await factory.update({
     id,
-    ...payload,
+    tableId,
+    ...data
   });
+  
   return response.status(200).json(result);
 }

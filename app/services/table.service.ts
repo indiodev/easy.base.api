@@ -1,4 +1,4 @@
-import { Table } from "@prisma/client";
+import { TableDocument as Table } from "@config/mongoose/schema";
 
 import { ColumnRepository } from "@repositories/column.repository";
 import { RowRepository } from "@repositories/row.repository";
@@ -13,13 +13,9 @@ export class TableService {
   ) {}
 
   async show(id: string): Promise<Table> {
-    const table = await this.tableRepository.findUnique({
-      where: { id },
-      include: {
-        columns: true,
-        rows: true,
-      },
-    });
+
+    
+    const table = await this.tableRepository.findUnique({_id: id});
 
     if (!table) throw new Error("Tabela não encontrada.");
 
@@ -27,16 +23,20 @@ export class TableService {
   }
 
   async list(): Promise<Table[]> {
-    return await this.tableRepository.findMany({
-      include: {
-        columns: true,
-        rows: true,
-      },
-    });
+    const tables = await this.tableRepository.findMany()
+    return tables;
   }
 
-  async create(payload: any): Promise<Table> {
-    return await this.tableRepository.create({
+  async filter(payload: any): Promise<Table[]> {
+    const tables =  await this.tableRepository.findMany({
+      _id: payload._id,
+    })
+
+    return tables
+  }
+
+  async create(payload: any): Promise<Table > {
+    const createdTable = await this.tableRepository.create({
       data: {
         identifier: payload.title,
         title: payload.title,
@@ -52,19 +52,26 @@ export class TableService {
         },
       },
     });
+
+    if (!createdTable) throw new Error("Failed to create table.");
+
+    return createdTable;
   }
 
-  async update(payload: any): Promise<Table> {
-    return await this.tableRepository.update({
-      where: {
-        id: payload.id,
-      },
-      data: {
-        identifier: payload.title,
-        title: payload.title,
+  async update(payload: any): Promise<Table | null> {
+
+    const payloudWithoutColumns = payload
+    const payloadColumns = payload.columns
+    delete payloudWithoutColumns.columns
+    delete payloudWithoutColumns.id
+    delete payloudWithoutColumns.rows
+
+    return await this.tableRepository.update(payload._id, {
+        ...payloudWithoutColumns,
         columns: {
-          update: payload.columns?.map((column: any) => {
+          set: payloadColumns?.map((column: any) => {
             return {
+              id: column.id,
               title: column.title,
               type: column.type,
               slug: slugify(column.title),
@@ -72,27 +79,14 @@ export class TableService {
             };
           }),
         },
-      },
     });
   }
 
-  async delete(id: string): Promise<Table> {
+  async delete(id: string): Promise<Table | null> {
     await this.rowRepository.deleteMany({
-      where: {
-        tableId: id,
-      },
+      tableId: id,
     });
 
-    await this.columnRepository.deleteMany({
-      where: {
-        tableId: id,
-      },
-    });
-
-    return await this.tableRepository.delete({
-      where: {
-        id,
-      },
-    });
+    return await this.tableRepository.delete(id);
   }
 }

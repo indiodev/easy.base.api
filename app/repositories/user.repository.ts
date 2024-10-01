@@ -1,29 +1,38 @@
-import { Prisma, PrismaClient, User } from "@prisma/client";
+import mongoose, { Model, FilterQuery, UpdateQuery } from "mongoose";
+import { UserDocument, Models} from "@config/mongoose/schema"; // Importar o modelo e documento User
+import { Env } from "@config/env";
 
 export class UserRepository {
-  constructor(private prisma: PrismaClient) {}
+  
 
-  async findUnique(args: Prisma.UserFindUniqueArgs): Promise<User | null> {
-    return await this.prisma.user.findUnique(args);
+  // Encontra um único usuário por um filtro (similar ao `findUnique`)
+  async findUnique(filter: FilterQuery<UserDocument>): Promise<UserDocument | null> {
+    return await Models.User.findOne(filter).exec();
   }
 
-  async findFirst(args: Prisma.UserFindFirstArgs): Promise<User | null> {
-    return await this.prisma.user.findFirst(args);
+  // Encontra o primeiro usuário que atenda aos critérios (similar ao `findFirst`)
+  async findFirst(filter: FilterQuery<UserDocument>): Promise<UserDocument | null> {
+    return await Models.User.findOne(filter).exec();
   }
 
-  async create(args: Prisma.UserCreateArgs): Promise<User> {
-    return await this.prisma.user.create(args);
+  // Cria um novo usuário (similar ao `create`)
+  async create(userData: Partial<UserDocument>): Promise<UserDocument> {
+    const newUser = new Models.User(userData);
+    return await newUser.save();
   }
 
-  async findMany(args: Prisma.UserFindManyArgs): Promise<User[]> {
-    return await this.prisma.user.findMany(args);
+  // Encontra múltiplos usuários com base em um filtro (similar ao `findMany`)
+  async findMany(filter: FilterQuery<UserDocument> = {}): Promise<UserDocument[]> {
+    return await Models.User.find(filter).exec();
   }
 
-  async update(args: Prisma.UserUpdateArgs): Promise<User> {
-    return await this.prisma.user.update(args);
+  // Atualiza um usuário com base no ID e dados de atualização (similar ao `update`)
+  async update(id: string, updateData: UpdateQuery<UserDocument>): Promise<UserDocument | null> {
+    return await Models.User.findByIdAndUpdate(id, updateData, { new: true }).exec();
   }
 
-  async delete(args: Prisma.UserDeleteArgs): Promise<User> {
-    return await this.prisma.user.delete(args);
+  // Exclui um usuário com base no ID (similar ao `delete`)
+  async delete(id: string): Promise<UserDocument | null> {
+    return await Models.User.findByIdAndDelete(id).exec();
   }
 }

@@ -1,11 +1,23 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import mongoose, { mongo } from "mongoose";
+import { Models } from "@config/mongoose/schema";
+import { Env } from "@config/env";
 
 export class ColumnRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(table: any) {
+    mongoose.connect(Env.DATABASE_URL)
+    .then(() => console.log('Connected!'));
+  }
 
-  async deleteMany(
-    args: Prisma.ColumnDeleteManyArgs,
-  ): Promise<Prisma.BatchPayload> {
-    return await this.prisma.column.deleteMany(args);
+  async delete(args: any ): Promise<any> {
+
+    return Models.Table.findOneAndUpdate(
+      { _id: args.tableId }, 
+      { 
+        $pull: { 
+          columns: { _id: args.data.id }
+        }
+      },
+      { new: true } // Retorna o documento atualizado
+    )
   }
 }

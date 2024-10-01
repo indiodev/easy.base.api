@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { UserDocument as User } from "@config/mongoose/schema";
 
 import { UserCreate, UserUpdate } from "@dto/user.dto";
 import { UserRepository } from "@repositories/user.repository";
@@ -35,39 +35,23 @@ export class UserService {
     return users.map(({ password, ...user }) => user);
   }
 
-  async create(payload: UserCreate): Promise<User> {
+  async create(payload: UserCreate): Promise<Partial<User>> {
     const user = await this.userRepository.create({
-      data: payload,
+      ...payload,
     });
     return user;
   }
 
-  async update({ id, ...payload }: UserUpdate): Promise<User> {
-    const user = await this.userRepository.update({
-      where: {
-        id: id,
-      },
-      data: {
+  async update({ id, ...payload }: UserUpdate): Promise<Partial<User | null> > {
+    const user = await this.userRepository.update(id!, {
         email: payload.email,
         name: payload.name,
         password: payload.password,
-        // group: payload.group,
-        group: {
-          connect: {
-            id: payload.group,
-          },
-        },
-      },
-    });
-
+      });
     return user;
   }
 
-  async delete(id: string): Promise<User> {
-    return await this.userRepository.delete({
-      where: {
-        id,
-      },
-    });
+  async delete(id: string): Promise<User | null> {
+    return await this.userRepository.delete(id);
   }
 }
