@@ -55,6 +55,7 @@ export class TableRepository {
 
   // Excluir um documento da coleção Table
   async delete(id: string): Promise<TableDocument | null> {
+
     return await Models.Table.findByIdAndDelete(id).exec(); // Exclui por ID
   }
 
