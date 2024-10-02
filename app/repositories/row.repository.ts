@@ -1,5 +1,5 @@
 import mongoose, { Model, Types } from "mongoose";
-import { TableDocument, Models } from "@config/mongoose/schema"; 
+import { TableDocument, Models, RowDocument } from "@config/mongoose/schema"; 
 import { Env } from "@config/env";
 import createDynamicModel from "@config/mongoose/functions";
 
@@ -13,7 +13,29 @@ export interface IRowRepository{
 
 export class RowRepository {
 
+
+  async show(args: IRowRepository): Promise<any | null> {
+    
+    const table = await Models.Table.findById(args.tableId).exec();
+    if (!table) {
+      throw new Error("Table not found");
+    }
+
+    const CollectionModel = this.getCollectionModel(table);
+
+    const row = await CollectionModel.findById(args.id).exec() as any;
+
+    if (!row) {
+      return null;
+    }
+
+    const returnRow = { _id: row._id, value: row, created_at: row.created_at, updated_at: row.updated_at }
+
+    return returnRow
+  }
+
   async create(args: IRowRepository): Promise<any | null> {
+
     const rowWithoutTableId = { ...args.data!.value, _id: new Types.ObjectId() }; 
     delete rowWithoutTableId.tableId; 
 
