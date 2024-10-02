@@ -7,10 +7,11 @@ export async function Delete(
   response: Response,
 ): Promise<Response> {
   const factory = RowFactory();
-  const id = request.body.id;
+
   const result = await factory.delete({
-    tableId: request.params.id,
-    id
+    tableId: request.params.tableId,
+    id: request.params.id
   });
+  
   return response.status(200).json(result);
 }
