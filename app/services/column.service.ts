@@ -19,6 +19,7 @@ export class ColumnService {
     const column = {
       id: new ObjectId().toString(),
       title: payload.column.title!,
+      identifier: payload.column.title!,
       type: payload.column.type,
       slug: slugify(payload.column.title!),
       config: payload.column.config,
@@ -41,6 +42,9 @@ export class ColumnService {
         message: "Coluna já existe.",
         cause: "COLUMN_ALREADY_EXISTS",
       });
+
+    console.log(payload.tableId)
+    console.log([...old, column]) 
 
     await this.tableRepository.update(
       payload.tableId,

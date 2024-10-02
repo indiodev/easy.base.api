@@ -4,6 +4,13 @@ import { RowRepository } from "@repositories/row.repository";
 export class RowService {
   constructor(private rowRepository: RowRepository) {}
 
+  async show({ id, tableId }: any): Promise<RowDocument> {
+    return await this.rowRepository.show({
+      id,
+      tableId,
+    });
+  }
+
   async create({ tableId, ...payload }: any): Promise<RowDocument> {
     return await this.rowRepository.create({
       data: {
