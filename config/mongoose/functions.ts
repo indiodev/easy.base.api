@@ -14,13 +14,15 @@ export const generateCollectionName = async (tableName: string): Promise<string>
 
 export const getColumnDataType = (type: string): any => {
   switch (type) {
-    case 'editablecell':
+    case 'SHORT_TEXT':
       return "String";
-    case 'numbercell':
-      return "Number";
-    case 'booleancell':
+    case 'LONG_TEXT':
+      return "String";
+    case 'DROPDOWN':
+      return "String";
+    case 'BOOLEAN':
       return "Boolean";
-    case 'datecell':
+    case 'DATE':
       return "Date";
     default:
       return "String";

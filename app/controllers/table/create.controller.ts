@@ -8,7 +8,7 @@ export async function Create(
 ): Promise<Response> {
   const factory = TableFactory();
   const result = await factory.create({
-    ...request.body.data,
+    ...request.body,
   });
   return response.status(200).json(result);
 }

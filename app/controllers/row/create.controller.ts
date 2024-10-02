@@ -9,7 +9,7 @@ export async function Create(
   const factory = RowFactory();
   const result = await factory.create({
     tableId: request.params.id,
-    ...request.body.data,
+    ...request.body,
   });
   return response.status(200).json(result);
 }

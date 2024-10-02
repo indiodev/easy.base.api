@@ -1,9 +1,35 @@
 import { RowController } from "@controllers/row";
+import { Middleware } from "@middleware/index";
+import { storage } from "@util/multer";
 
 import { router } from "./router";
+import multer from "multer";
 
-router.post("/tables/:id/row", RowController.Create);
-router.put("/tables/:id/row", RowController.Update);
-router.delete("/tables/:id/row", RowController.Delete);
+const upload = multer({ storage });
 
+router.post(
+    "/tables/:id/row",
+    upload.any(),
+    Middleware.Authentication,
+    RowController.Create,
+  );
+  
+  router.patch(
+    "/tables/:tableId/row/:id",
+    upload.any(),
+    Middleware.Authentication,
+    RowController.Update,
+  );
+  
+  router.get(
+    "/tables/:tableId/row/:id",
+    Middleware.Authentication,
+    RowController.Show,
+  );
+  
+  router.delete(
+    "/tables/:tableId/row/:id",
+    Middleware.Authentication,
+    RowController.Delete,
+  );
 export { router as rowRoutes };

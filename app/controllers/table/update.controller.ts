@@ -9,7 +9,7 @@ export async function Update(
   const factory = TableFactory();
   const result = await factory.update({
     id: request.params.id,
-    ...request.body.data,
+    ...request.body,
   });
   return response.status(200).json(result);
 }

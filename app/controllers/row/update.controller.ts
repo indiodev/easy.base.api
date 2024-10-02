@@ -7,8 +7,9 @@ export async function Update(
 ): Promise<Response> {
 
   const factory = RowFactory();
-  const id  = request.body._id; // row id
-  const tableId = request.params.id; // table id
+  const id  = request.params.id; // row id
+  const tableId = request.params.tableId; // table id
+  
   const data = request.body
 
   delete data._id;
