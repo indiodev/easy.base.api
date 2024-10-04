@@ -17,7 +17,7 @@ export class ColumnService {
     const table = await this.tableRepository.findUnique({_id: payload.tableId});
 
     const column = {
-      id: new ObjectId().toString(),
+      _id: new ObjectId().toString(),
       title: payload.column.title!,
       identifier: payload.column.title!,
       type: payload.column.type,
@@ -89,7 +89,11 @@ export class ColumnService {
   }
 
   async show(query: { tableId: string; columnId: Schema.Types.ObjectId }): Promise<Column> {
+
+
     const table = await this.tableRepository.findUnique({_id: query.tableId});
+
+    console.log(table?.columns[0]._id)
 
     if (!table)
       throw new ApplicationException({
@@ -98,7 +102,10 @@ export class ColumnService {
         cause: "TABLE_NOT_FOUND",
       });
 
-    const column = table.columns.find((column) => column._id === query.columnId);
+    // const column = table.columns.find((column) => column._id === query.columnId);
+      
+    const column = table.columns.find((column) => column._id.toString() === query.columnId.toString());
+  
 
     if (!column)
       throw new ApplicationException({
