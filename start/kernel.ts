@@ -8,7 +8,7 @@ const app = express();
 connectDatabase()
 
 app.use(cors({
-    origin: 'https://gbd-client-five.vercel.app/',
+    origin: '*',
     methods: '*',
     credentials: false,
 }));
