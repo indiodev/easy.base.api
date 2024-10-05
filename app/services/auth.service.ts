@@ -1,7 +1,6 @@
-import { UserDocument as User, Models } from "@config/mongoose/schema";
-
 import { sign } from "jsonwebtoken";
 
+import { Models, UserDocument as User } from "@config/mongoose/schema";
 import { AuthLogin, AuthRegister } from "@dto/auth.dto";
 import { ApplicationException } from "@exceptions/application.exception";
 import { HashProvider } from "@providers/hash.providers";
@@ -13,8 +12,6 @@ export class AuthService {
     private userRepository: UserRepository,
     private hashProvider: HashProvider,
   ) {}
-
-
 
   async login(payload: AuthLogin): Promise<{ token: string }> {
     const user = await Models.User.findOne({
@@ -54,7 +51,6 @@ export class AuthService {
 
   async register({ password, ...payload }: AuthRegister): Promise<User> {
     const hash = new HashProvider();
-
 
     const passwordHashed = await hash.generate(password);
 

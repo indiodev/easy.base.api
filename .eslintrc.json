@@ -51,7 +51,11 @@
 					["@factories", "./app/factories"],
 					["@validators", "./app/validators"],
 					["@dto", "./app/dto"],
-					["@util", "./app/util"]
+					["@util", "./app/util"],
+					["@providers", "./app/providers"],
+					["@exceptions", "./app/exceptions"],
+					["@middleware", "./app/middleware"]
+
 				],
 				"extensions": [".ts", ".js", ".json"]
 			}

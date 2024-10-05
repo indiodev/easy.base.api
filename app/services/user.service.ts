@@ -1,5 +1,4 @@
 import { UserDocument as User } from "@config/mongoose/schema";
-
 import { UserCreate, UserUpdate } from "@dto/user.dto";
 import { UserRepository } from "@repositories/user.repository";
 
@@ -42,12 +41,12 @@ export class UserService {
     return user;
   }
 
-  async update({ id, ...payload }: UserUpdate): Promise<Partial<User | null> > {
+  async update({ id, ...payload }: UserUpdate): Promise<Partial<User | null>> {
     const user = await this.userRepository.update(id!, {
-        email: payload.email,
-        name: payload.name,
-        password: payload.password,
-      });
+      email: payload.email,
+      name: payload.name,
+      password: payload.password,
+    });
     return user;
   }
 

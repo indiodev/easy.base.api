@@ -1,5 +1,4 @@
 import { FormDocument as Form } from "@config/mongoose/schema";
-
 import { FormRepository } from "@repositories/form.repository";
 
 export class FormService {
@@ -39,9 +38,6 @@ export class FormService {
   }
 
   async update({ id, ...payload }: any): Promise<Form | null> {
-    return await this.formRepository.update(
-      id,
-      payload
-    );
+    return await this.formRepository.update(id, payload);
   }
 }

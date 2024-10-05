@@ -1,5 +1,4 @@
 import { RoleDocument as Role } from "@config/mongoose/schema";
-
 import { RoleRepository } from "@repositories/roles.repository";
 
 export class RoleService {

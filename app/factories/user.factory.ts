@@ -1,4 +1,3 @@
-import { Prisma } from "@database/prisma";
 import { UserRepository } from "@repositories/user.repository";
 import { UserService } from "@services/user.service";
 
