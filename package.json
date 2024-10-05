@@ -29,6 +29,7 @@
     "prettier": "^3.3.3",
     "prisma": "^5.19.1",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.2"
   },
   "dependencies": {
@@ -45,6 +46,7 @@
     "fast-xml-parser": "^4.4.1",
     "html-entities": "^2.3.3",
     "jsdom": "^21.1.1",
+    "module-alias": "^2.2.3",
     "mongo": "^0.1.0",
     "mongodb": "^6.8.1",
     "mongoose": "^8.6.3",
@@ -55,5 +57,21 @@
     "xml": "^1.0.1",
     "zod": "^3.23.8"
   },
-  "description": ""
+  "description": "",
+  "_moduleAliases": {
+    "@config": "build/config",
+    "@start": "build/start",
+    "@bin": "build/bin",
+    "@database": "build/database",
+    "@repositories": "build/app/repositories",
+    "@services": "build/app/services",
+    "@controllers": "build/app/controllers",
+    "@factories": "build/app/factories",
+    "@validators": "build/app/validators",
+    "@dto": "build/app/dto",
+    "@util": "build/app/util",
+    "@exceptions": "build/app/exceptions",
+    "@providers": "build/app/providers",
+    "@middleware": "build/app/middleware"
+  }
 }

@@ -1,3 +1,5 @@
+import 'module-alias/register';
+
 import { Env } from "@config/env";
 import { router } from "@start/routes";
 

@@ -7,13 +7,13 @@ const app = express();
 
 connectDatabase();
 
-app.use(
-  cors({
-    origin: "https://gbd-client-five.vercel.app/",
-    methods: "*",
+app.use(cors({
+    origin: '*',
+    methods: '*',
     credentials: false,
   }),
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("files"));
