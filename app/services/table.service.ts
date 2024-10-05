@@ -1,5 +1,4 @@
 import { TableDocument as Table } from "@config/mongoose/schema";
-
 import { ColumnRepository } from "@repositories/column.repository";
 import { RowRepository } from "@repositories/row.repository";
 import { TableRepository } from "@repositories/table.repository";
@@ -13,9 +12,7 @@ export class TableService {
   ) {}
 
   async show(id: string): Promise<Table> {
-
-    
-    const table = await this.tableRepository.findUnique({_id: id});
+    const table = await this.tableRepository.findUnique({ _id: id });
 
     if (!table) throw new Error("Tabela não encontrada.");
 
@@ -23,19 +20,19 @@ export class TableService {
   }
 
   async list(): Promise<Table[]> {
-    const tables = await this.tableRepository.findMany()
+    const tables = await this.tableRepository.findMany();
     return tables;
   }
 
   async filter(payload: any): Promise<Table[]> {
-    const tables =  await this.tableRepository.findMany({
+    const tables = await this.tableRepository.findMany({
       _id: payload._id,
-    })
+    });
 
-    return tables
+    return tables;
   }
 
-  async create(payload: any): Promise<Table > {
+  async create(payload: any): Promise<Table> {
     const createdTable = await this.tableRepository.create({
       data: {
         identifier: payload.title,
@@ -59,26 +56,25 @@ export class TableService {
   }
 
   async update(payload: any): Promise<Table | null> {
-
-    const payloudWithoutColumns = payload
-    const payloadColumns = payload.columns
-    delete payloudWithoutColumns.columns
-    delete payloudWithoutColumns.id
-    delete payloudWithoutColumns.rows
+    const payloudWithoutColumns = payload;
+    const payloadColumns = payload.columns;
+    delete payloudWithoutColumns.columns;
+    delete payloudWithoutColumns.id;
+    delete payloudWithoutColumns.rows;
 
     return await this.tableRepository.update(payload._id, {
-        ...payloudWithoutColumns,
-        columns: {
-          set: payloadColumns?.map((column: any) => {
-            return {
-              id: column.id,
-              title: column.title,
-              type: column.type,
-              slug: slugify(column.title),
-              config: column.config || null,
-            };
-          }),
-        },
+      ...payloudWithoutColumns,
+      columns: {
+        set: payloadColumns?.map((column: any) => {
+          return {
+            id: column.id,
+            title: column.title,
+            type: column.type,
+            slug: slugify(column.title),
+            config: column.config || null,
+          };
+        }),
+      },
     });
   }
 

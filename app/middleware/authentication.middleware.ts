@@ -1,5 +1,4 @@
-import { NextFunction, Request, Response } from "express";
-import { Request as ExpressRequest } from "express";
+import { Request as ExpressRequest, NextFunction, Response } from "express";
 import { verify } from "jsonwebtoken";
 
 import { ApplicationException } from "@exceptions/application.exception";
@@ -28,7 +27,6 @@ export async function AuthenticationMiddleware(
     const { sub } = verify(token, Authentication.JWT.SECRET) as {
       sub: string;
     };
-
 
     request.user = {
       id: sub,

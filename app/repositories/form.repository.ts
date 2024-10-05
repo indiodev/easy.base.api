@@ -1,13 +1,13 @@
-import mongoose, { Model } from 'mongoose';
-import { FormDocument, Models } from '@config/mongoose/schema';
-import { Env } from '@config/env';
+import mongoose, { Model } from "mongoose";
+
+import { Env } from "@config/env";
+import { FormDocument, Models } from "@config/mongoose/schema";
 const { Form } = Models;
 type FormType = typeof Form;
 
 export class FormRepository {
   constructor(private formModel: Model<FormDocument>) {
-    mongoose.connect(Env.DATABASE_URL)
-    .then(() => console.log('Connected!'));
+    mongoose.connect(Env.DATABASE_URL).then(() => console.log("Connected!"));
   } // Model do Mongoose injetado
 
   // Método para criar um novo formulário
@@ -32,8 +32,13 @@ export class FormRepository {
   }
 
   // Método para atualizar um formulário por ID
-  async update(id: string, data: Partial<FormType>): Promise<FormDocument | null> {
-    return await this.formModel.findByIdAndUpdate(id, data, { new: true }).exec(); // Retorna o formulário atualizado
+  async update(
+    id: string,
+    data: Partial<FormType>,
+  ): Promise<FormDocument | null> {
+    return await this.formModel
+      .findByIdAndUpdate(id, data, { new: true })
+      .exec(); // Retorna o formulário atualizado
   }
 
   // Método para excluir um formulário por ID

@@ -7,7 +7,6 @@ export async function Create(
   response: Response,
 ): Promise<Response> {
   const factory = FormFactory();
-  // const payload = FormCreateValidator.parse(request.body);
   const result = await factory.create({
     ...request.body,
     id: request.body.id,

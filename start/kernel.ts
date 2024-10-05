@@ -1,17 +1,19 @@
 import cors from "cors";
 import express from "express";
+
 import connectDatabase from "@config/mongoose/connect";
 
 const app = express();
 
-
-connectDatabase()
+connectDatabase();
 
 app.use(cors({
     origin: '*',
     methods: '*',
     credentials: false,
-}));
+  }),
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("files"));

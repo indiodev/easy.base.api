@@ -1,5 +1,4 @@
 import { Models } from "@config/mongoose/schema";
-import { Prisma } from "@database/prisma";
 import { RoleRepository } from "@repositories/roles.repository";
 import { RoleService } from "@services/role.service";
 

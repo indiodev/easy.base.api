@@ -7,7 +7,7 @@ export async function Delete(
   response: Response,
 ): Promise<Response> {
   const factory = FormFactory();
-  // const result = await factory.delete(request.params.id);
+
   const result = await factory.delete(request.body.id);
 
   return response.status(200).json(result);
