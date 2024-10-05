@@ -17,8 +17,6 @@ export async function Show(
     });
 
 
-    
-
     return response.status(200).json(result);
   }catch(error){
     console.log(error);

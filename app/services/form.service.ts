@@ -1,4 +1,4 @@
-import { Form } from "@prisma/client";
+import { FormDocument as Form } from "@config/mongoose/schema";
 
 import { FormRepository } from "@repositories/form.repository";
 
@@ -7,7 +7,7 @@ export class FormService {
 
   async create(payload: any): Promise<Form> {
     return await this.formRepository.create({
-      data: payload,
+      ...payload,
     });
   }
 
@@ -34,20 +34,14 @@ export class FormService {
     return form;
   }
 
-  async delete(id: string): Promise<Form> {
-    return await this.formRepository.delete({
-      where: {
-        id,
-      },
-    });
+  async delete(id: string): Promise<Form | null> {
+    return await this.formRepository.delete(id);
   }
 
-  async update({ id, ...payload }: any): Promise<Form> {
-    return await this.formRepository.update({
-      where: {
-        id: id,
-      },
-      data: payload,
-    });
+  async update({ id, ...payload }: any): Promise<Form | null> {
+    return await this.formRepository.update(
+      id,
+      payload
+    );
   }
 }
