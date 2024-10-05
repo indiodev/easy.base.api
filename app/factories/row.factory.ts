@@ -1,4 +1,3 @@
-import { Prisma } from "@database/prisma";
 import { RowRepository } from "@repositories/row.repository";
 import { RowService } from "@services/row.service";
 

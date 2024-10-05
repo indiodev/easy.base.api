@@ -1,22 +1,23 @@
-import mongoose, { Schema } from 'mongoose';
+/* eslint-disable no-undef */
+import mongoose, { Schema } from "mongoose";
 
 // Enum for UserRole
 const UserRole = {
-  ADMIN: 'ADMIN',
-  CREATOR: 'CREATOR',
-  REVISOR: 'REVISOR',
-  COLLABORATOR: 'COLLABORATOR',
-  EDITOR: 'EDITOR',
-  VIEWER: 'VIEWER',
-  USER: 'USER'
+  ADMIN: "ADMIN",
+  CREATOR: "CREATOR",
+  REVISOR: "REVISOR",
+  COLLABORATOR: "COLLABORATOR",
+  EDITOR: "EDITOR",
+  VIEWER: "VIEWER",
+  USER: "USER",
 };
 
 // Role Schema
 const RoleSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   role: { type: String, enum: Object.values(UserRole), required: true },
-  permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Permission' }],
-  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Permission" }],
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
 // Setting Schema
@@ -27,7 +28,7 @@ const SettingSchema = new Schema({
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
   deleted_at: { type: Date },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 // Permission Schema
@@ -35,11 +36,11 @@ const PermissionSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   title: { type: String, required: true },
   slug: { type: String, required: true },
-  roles: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
+  roles: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
   deleted_at: { type: Date },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 // Group Schema
@@ -47,7 +48,7 @@ const GroupSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   title: { type: String, required: true },
   level: { type: String, required: true },
-  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
 // User Schema
@@ -56,16 +57,16 @@ const UserSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group' },
-  tables: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Table' }],
+  group: { type: mongoose.Schema.Types.ObjectId, ref: "Group" },
+  tables: [{ type: mongoose.Schema.Types.ObjectId, ref: "Table" }],
   status: { type: String },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
   deleted_at: { type: Date },
-  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
-  rows: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Row' }],
-  role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
-  forms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }]
+  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
+  rows: [{ type: mongoose.Schema.Types.ObjectId, ref: "Row" }],
+  role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
+  forms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Form" }],
 });
 
 // Column Type
@@ -80,7 +81,7 @@ const ColumnSchema = new Schema({
   status: { type: String },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
-  deleted_at: { type: Date }
+  deleted_at: { type: Date },
 });
 
 // Row Type
@@ -91,7 +92,7 @@ const RowSchema = new Schema({
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
   deleted_at: { type: Date },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 // Review Schema
@@ -103,34 +104,36 @@ const ReviewSchema = new Schema({
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
   deleted_at: { type: Date },
-  created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  rowId: { type: mongoose.Schema.Types.ObjectId, ref: 'Row' },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  created_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  rowId: { type: mongoose.Schema.Types.ObjectId, ref: "Row" },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 // Form Schema
 const FormSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
-  title: { type: String, default: '', required: true },
-  table: { type: mongoose.Schema.Types.ObjectId, ref: 'Table' },
+  title: { type: String, default: "", required: true },
+  table: { type: mongoose.Schema.Types.ObjectId, ref: "Table" },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
   deleted_at: { type: Date },
-  created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  created_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   published: { type: Boolean, default: false },
-  description: { type: String, default: '' },
+  description: { type: String, default: "" },
   visits: { type: Number, default: 0 },
   submissions: { type: Number, default: 0 },
-  shareUrl: { type: String, default: ""},
-  formSubmissions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FormSubmissions' }]
+  shareUrl: { type: String, default: "" },
+  formSubmissions: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "FormSubmissions" },
+  ],
 });
 
 // FormSubmissions Schema
 const FormSubmissionsSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   created_at: { type: Date, default: Date.now },
-  form: { type: mongoose.Schema.Types.ObjectId, ref: 'Form' },
-  content: { type: String, required: true }
+  form: { type: mongoose.Schema.Types.ObjectId, ref: "Form" },
+  content: { type: String, required: true },
 });
 
 // Table Schema
@@ -138,8 +141,8 @@ const TableSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   title: { type: String, required: true },
   identifier: { type: String, required: true },
-  rows: [ RowSchema ],
-  columns: [ ColumnSchema ],
+  rows: [RowSchema],
+  columns: [ColumnSchema],
   config: { type: Schema.Types.Mixed },
   schema: { type: Schema.Types.Mixed },
   data_collection: { type: String },
@@ -148,22 +151,29 @@ const TableSchema = new Schema({
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
   deleted_at: { type: Date },
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
-
 // Models
-const Role = mongoose.model<RoleDocument>('Role', RoleSchema, 'Role');
-const Setting = mongoose.model('Setting', SettingSchema, 'Setting');
-const Permission = mongoose.model<PermissionDocument>('Permission', PermissionSchema, 'Permission');
-const Group = mongoose.model<GroupDocument>('Group', GroupSchema, 'Group');
-const User = mongoose.model<UserDocument>('User', UserSchema, "User");
-const Table = mongoose.model<TableDocument>('Table', TableSchema, 'Table');
-const Column = mongoose.model<ColumnDocument>('Column', ColumnSchema, 'Column');
-const Row = mongoose.model<RowDocument>('Row', RowSchema, 'Row');
-const Review = mongoose.model<ReviewDocument>('Review', ReviewSchema, 'Review');
-const Form = mongoose.model<FormDocument>('Form', FormSchema, 'Form');
-const FormSubmissions = mongoose.model<FormSubmissionsDocument>('FormSubmissions', FormSubmissionsSchema, 'FormSubmissions');
+const Role = mongoose.model<RoleDocument>("Role", RoleSchema, "Role");
+const Setting = mongoose.model("Setting", SettingSchema, "Setting");
+const Permission = mongoose.model<PermissionDocument>(
+  "Permission",
+  PermissionSchema,
+  "Permission",
+);
+const Group = mongoose.model<GroupDocument>("Group", GroupSchema, "Group");
+const User = mongoose.model<UserDocument>("User", UserSchema, "User");
+const Table = mongoose.model<TableDocument>("Table", TableSchema, "Table");
+const Column = mongoose.model<ColumnDocument>("Column", ColumnSchema, "Column");
+const Row = mongoose.model<RowDocument>("Row", RowSchema, "Row");
+const Review = mongoose.model<ReviewDocument>("Review", ReviewSchema, "Review");
+const Form = mongoose.model<FormDocument>("Form", FormSchema, "Form");
+const FormSubmissions = mongoose.model<FormSubmissionsDocument>(
+  "FormSubmissions",
+  FormSubmissionsSchema,
+  "FormSubmissions",
+);
 
 export interface RoleDocument extends Document {
   role: keyof typeof UserRole;
@@ -275,5 +285,31 @@ export interface FormSubmissionsDocument extends Document {
   content: string;
 }
 
-export const Schemas = { RoleSchema, SettingSchema, PermissionSchema, GroupSchema, UserSchema, TableSchema, ColumnSchema, RowSchema, ReviewSchema, FormSchema, FormSubmissionsSchema };
-export const Models = { Role, Setting, Permission, Group, User, Table, Column, Row, Review, Form, FormSubmissions, UserRole };
+export const Schemas = {
+  RoleSchema,
+  SettingSchema,
+  PermissionSchema,
+  GroupSchema,
+  UserSchema,
+  TableSchema,
+  ColumnSchema,
+  RowSchema,
+  ReviewSchema,
+  FormSchema,
+  FormSubmissionsSchema,
+};
+
+export const Models = {
+  Role,
+  Setting,
+  Permission,
+  Group,
+  User,
+  Table,
+  Column,
+  Row,
+  Review,
+  Form,
+  FormSubmissions,
+  UserRole,
+};

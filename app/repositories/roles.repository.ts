@@ -1,11 +1,11 @@
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model } from "mongoose";
+
+import { Env } from "@config/env";
 import { RoleDocument } from "@config/mongoose/schema"; // Importando o modelo Role
-import { Env } from '@config/env';
 
 export class RoleRepository {
   constructor(private roleModel: Model<RoleDocument>) {
-    mongoose.connect(Env.DATABASE_URL)
-    .then(() => console.log('Connected!'));
+    mongoose.connect(Env.DATABASE_URL).then(() => console.log("Connected!"));
   }
 
   // Método para buscar múltiplos roles

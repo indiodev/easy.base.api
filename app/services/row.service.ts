@@ -23,7 +23,7 @@ export class RowService {
   async delete({ tableId, id }: any): Promise<RowDocument> {
     return await this.rowRepository.delete({
       id,
-      tableId
+      tableId,
     });
   }
 

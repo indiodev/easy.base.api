@@ -1,5 +1,4 @@
 import { Models } from "@config/mongoose/schema";
-import { Prisma } from "@database/prisma";
 import { ColumnRepository } from "@repositories/column.repository";
 import { RowRepository } from "@repositories/row.repository";
 import { TableRepository } from "@repositories/table.repository";

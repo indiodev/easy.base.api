@@ -10,8 +10,8 @@ export async function Delete(
 
   const result = await factory.delete({
     tableId: request.params.tableId,
-    id: request.params.id
+    id: request.params.id,
   });
-  
+
   return response.status(200).json(result);
 }

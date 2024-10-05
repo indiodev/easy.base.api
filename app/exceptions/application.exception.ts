@@ -1,9 +1,9 @@
 type HTTPException = {
-    message: string;
-    code: number;
-    cause?: string;
+  message: string;
+  code: number;
+  cause?: string;
 };
 
 export class ApplicationException {
-    constructor(public readonly exception: HTTPException) {}
+  constructor(public readonly exception: HTTPException) {}
 }

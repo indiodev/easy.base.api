@@ -7,7 +7,6 @@ export async function Update(
   response: Response,
 ): Promise<Response> {
   const factory = FormFactory();
-  // const payload = FormUpdateValidator.parse(request.body);
   const id = request.body.id;
   delete request.body.id;
   const result = await factory.update({ id, ...request.body });

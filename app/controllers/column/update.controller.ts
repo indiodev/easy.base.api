@@ -7,15 +7,15 @@ export async function Update(
   response: Response,
 ): Promise<Response> {
   const factory = ColumnFactory();
-  try{
+  try {
     await factory.update({
       column: { _id: request.params.id, ...request.body.column },
       tableId: request.body.tableId,
     });
-  }catch(error){
+  } catch (error) {
     console.log(error);
     return response.status(400).json(error);
   }
-  
+
   return response.status(200).send();
 }

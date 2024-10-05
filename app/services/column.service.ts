@@ -1,10 +1,10 @@
-import { ColumnDocument as Column } from "@config/mongoose/schema";
 import { ObjectId } from "mongodb";
+import { Schema } from "mongoose";
 
+import { ColumnDocument as Column } from "@config/mongoose/schema";
 import { ApplicationException } from "@exceptions/application.exception";
 import { TableRepository } from "@repositories/table.repository";
 import { slugify } from "@util/validators";
-import { Schema } from "mongoose";
 
 export class ColumnService {
   constructor(private tableRepository: TableRepository) {}
@@ -13,8 +13,9 @@ export class ColumnService {
     tableId: string;
     column: Partial<Column>;
   }): Promise<void> {
-
-    const table = await this.tableRepository.findUnique({_id: payload.tableId});
+    const table = await this.tableRepository.findUnique({
+      _id: payload.tableId,
+    });
 
     const column = {
       _id: new ObjectId().toString(),
@@ -43,18 +44,18 @@ export class ColumnService {
         cause: "COLUMN_ALREADY_EXISTS",
       });
 
-    console.log(payload.tableId)
-    console.log([...old, column]) 
+    console.log(payload.tableId);
+    console.log([...old, column]);
 
-    await this.tableRepository.update(
-      payload.tableId,
-      {
-        columns: [...old, column],
-      }
-    );
+    await this.tableRepository.update(payload.tableId, {
+      columns: [...old, column],
+    });
   }
 
-  async update(payload: { tableId: string; column: Partial<Column> }) {
+  async update(payload: {
+    tableId: string;
+    column: Partial<Column>;
+  }): Promise<void> {
     const table = await this.tableRepository.findUnique({
       where: {
         id: payload.tableId,
@@ -80,20 +81,18 @@ export class ColumnService {
       return c;
     });
 
-    await this.tableRepository.update(
-      payload.tableId,
-      {
-        columns
-      }
-    );
+    await this.tableRepository.update(payload.tableId, {
+      columns,
+    });
   }
 
-  async show(query: { tableId: string; columnId: Schema.Types.ObjectId }): Promise<Column> {
+  async show(query: {
+    tableId: string;
+    columnId: Schema.Types.ObjectId;
+  }): Promise<Column> {
+    const table = await this.tableRepository.findUnique({ _id: query.tableId });
 
-
-    const table = await this.tableRepository.findUnique({_id: query.tableId});
-
-    console.log(table?.columns[0]._id)
+    console.log(table?.columns[0]._id);
 
     if (!table)
       throw new ApplicationException({
@@ -103,9 +102,10 @@ export class ColumnService {
       });
 
     // const column = table.columns.find((column) => column._id === query.columnId);
-      
-    const column = table.columns.find((column) => column._id.toString() === query.columnId.toString());
-  
+
+    const column = table.columns.find(
+      (column) => column._id.toString() === query.columnId.toString(),
+    );
 
     if (!column)
       throw new ApplicationException({
@@ -118,7 +118,7 @@ export class ColumnService {
   }
 
   async findManyByTableId(tableId: string): Promise<Partial<Column>[]> {
-    const table = await this.tableRepository.findUnique({_id: tableId});
+    const table = await this.tableRepository.findUnique({ _id: tableId });
 
     if (!table) throw new Error("Tabela não encontrada.");
 
