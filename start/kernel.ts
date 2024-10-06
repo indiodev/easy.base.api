@@ -13,7 +13,7 @@ app.use(
     origin:
       Env.NODE_ENV === "development"
         ? "*"
-        : '"https://gbd-client-five.vercel.app/"',
+        : "https://gbd-client-five.vercel.app/",
     methods: "*",
     credentials: false,
   }),
