@@ -54,7 +54,6 @@ export class RowRepository {
   }
 
   async update(args: IRowRepository): Promise<any | null> {
-    console.log(args);
     const rowWithoutTableId = { ...args.data?.value };
 
     const table = await Models.Table.findById(args.tableId).exec();
