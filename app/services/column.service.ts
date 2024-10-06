@@ -69,10 +69,22 @@ export class ColumnService {
       });
 
     const columns = table?.columns.map((c) => {
-      if (JSON.stringify(c._id) === JSON.stringify(payload?.column?._id))
+      if (JSON.stringify(c._id) === JSON.stringify(payload?.column?._id)) {
         return {
+          _id: c._id,
+          slug: c.slug,
+          config: c.config,
+          title: c.title,
+          identifier: c.identifier,
+          type: c.type,
+          data: c.data,
+          status: c.status,
+          created_at: c.created_at,
+          updated_at: c.updated_at,
+          deleted_at: c.deleted_at,
           ...payload.column,
         };
+      }
 
       return c;
     });
