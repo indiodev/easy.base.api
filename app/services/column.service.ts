@@ -69,10 +69,8 @@ export class ColumnService {
       });
 
     const columns = table?.columns.map((c) => {
-      console.log(c);
       if (JSON.stringify(c._id) === JSON.stringify(payload?.column?._id))
         return {
-          // ...c,
           ...payload.column,
         };
 
