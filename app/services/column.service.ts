@@ -44,9 +44,6 @@ export class ColumnService {
         cause: "COLUMN_ALREADY_EXISTS",
       });
 
-    console.log(payload.tableId);
-    console.log([...old, column]);
-
     await this.tableRepository.update(payload.tableId, {
       columns: [...old, column],
     });
@@ -57,12 +54,12 @@ export class ColumnService {
     column: Partial<Column>;
   }): Promise<void> {
     const table = await this.tableRepository.findUnique({
-      where: {
-        id: payload.tableId,
-      },
+      _id: payload.tableId,
     });
 
-    const exist = table?.columns?.find((c) => c._id === payload.column._id);
+    const exist = table?.columns?.find(
+      (c) => JSON.stringify(c._id) === JSON.stringify(payload.column._id),
+    );
 
     if (!exist)
       throw new ApplicationException({
@@ -72,11 +69,22 @@ export class ColumnService {
       });
 
     const columns = table?.columns.map((c) => {
-      if (c._id === payload?.column?._id)
+      if (JSON.stringify(c._id) === JSON.stringify(payload?.column?._id)) {
         return {
-          ...c,
+          _id: c._id,
+          slug: c.slug,
+          config: c.config,
+          title: c.title,
+          identifier: c.identifier,
+          type: c.type,
+          data: c.data,
+          status: c.status,
+          created_at: c.created_at,
+          updated_at: c.updated_at,
+          deleted_at: c.deleted_at,
           ...payload.column,
         };
+      }
 
       return c;
     });
@@ -91,8 +99,6 @@ export class ColumnService {
     columnId: Schema.Types.ObjectId;
   }): Promise<Column> {
     const table = await this.tableRepository.findUnique({ _id: query.tableId });
-
-    console.log(table?.columns[0]._id);
 
     if (!table)
       throw new ApplicationException({
