@@ -23,6 +23,8 @@ export const getColumnDataType = (type: string): any => {
       return "Boolean";
     case "DATE":
       return "Date";
+    case "RELATIONAL":
+      return mongoose.Schema.Types.ObjectId;
     default:
       return "String";
   }

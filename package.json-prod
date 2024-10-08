@@ -59,19 +59,19 @@
   },
   "description": "",
   "_moduleAliases": {
-    "@config": "./config",
-    "@start": "./start",
-    "@bin": "./bin",
-    "@database": "./database",
-    "@repositories": "./app/repositories",
-    "@services": "./app/services",
-    "@controllers": "./app/controllers",
-    "@factories": "./app/factories",
-    "@validators": "./app/validators",
-    "@dto": "./app/dto",
-    "@util": "./app/util",
-    "@exceptions": "./app/exceptions",
-    "@providers": "./app/providers",
-    "@middleware": "./app/middleware"
+    "@config": "build/config",
+    "@start": "build/start",
+    "@bin": "build/bin",
+    "@database": "build/database",
+    "@repositories": "build/app/repositories",
+    "@services": "build/app/services",
+    "@controllers": "build/app/controllers",
+    "@factories": "build/app/factories",
+    "@validators": "build/app/validators",
+    "@dto": "build/app/dto",
+    "@util": "build/app/util",
+    "@exceptions": "build/app/exceptions",
+    "@providers": "build/app/providers",
+    "@middleware": "build/app/middleware"
   }
 }
