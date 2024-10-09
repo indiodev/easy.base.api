@@ -66,6 +66,7 @@ export class ColumnService {
 
     const column = table.columns.find(
       (column) => column._id.toString() === payload.column?._id?.toString(),
+
     );
 
     if (!column)
@@ -82,6 +83,7 @@ export class ColumnService {
 
       if (c._id.toString() === payload?.column?._id?.toString())
         return newCol
+
 
       return c;
     });
