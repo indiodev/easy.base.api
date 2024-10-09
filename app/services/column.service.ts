@@ -44,9 +44,6 @@ export class ColumnService {
         cause: "COLUMN_ALREADY_EXISTS",
       });
 
-    console.log(payload.tableId);
-    console.log([...old, column]);
-
     await this.tableRepository.update(payload.tableId, {
       columns: [...old, column],
     });
@@ -57,30 +54,39 @@ export class ColumnService {
     column: Partial<Column>;
   }): Promise<void> {
     const table = await this.tableRepository.findUnique({
-      where: {
-        id: payload.tableId,
-      },
+      _id: payload.tableId,
     });
 
-    const exist = table?.columns?.find((c) => c._id === payload.column._id);
-
-    if (!exist)
+    if (!table)
       throw new ApplicationException({
-        code: 400,
+        code: 404,
+        message: "Tabela não encontrada.",
+        cause: "COLUMN_NOT_FOUND",
+      });
+
+    const column = table.columns.find(
+      (column) => column._id.toString() === payload.column?._id?.toString(),
+    );
+
+    if (!column)
+      throw new ApplicationException({
+        code: 404,
         message: "Coluna não encontrada.",
         cause: "COLUMN_NOT_FOUND",
       });
 
-    const columns = table?.columns.map((c) => {
-      if (c._id === payload?.column?._id)
-        return {
-          ...c,
-          ...payload.column,
-        };
+
+    const columns = table.columns.map((c) => {
+
+      if (c._id.toString() === payload?.column?._id?.toString())
+        return payload.column
 
       return c;
     });
 
+    console.log(columns)
+
+  
     await this.tableRepository.update(payload.tableId, {
       columns,
     });
@@ -91,8 +97,6 @@ export class ColumnService {
     columnId: Schema.Types.ObjectId;
   }): Promise<Column> {
     const table = await this.tableRepository.findUnique({ _id: query.tableId });
-
-    console.log(table?.columns[0]._id);
 
     if (!table)
       throw new ApplicationException({

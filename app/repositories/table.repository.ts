@@ -75,8 +75,6 @@ export class TableRepository {
   async update(id: string, updateData: any): Promise<TableDocument | null> {
     const { columns, ...rest } = updateData;
 
-    console.log(columns);
-
     const schemaDefinition = columns
       ? columns
           .map((item: any) => ({
