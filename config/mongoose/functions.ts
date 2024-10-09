@@ -24,7 +24,7 @@ export const getColumnDataType = (type: string): any => {
     case "DATE":
       return "Date";
     case "RELATIONAL":
-      return mongoose.Schema.Types.ObjectId;
+      return "ObjectId";
     default:
       return "String";
   }

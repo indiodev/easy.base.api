@@ -11,15 +11,17 @@ router.patch(
 );
 
 router.get(
+  "/tables/:tableId/columns",
+  Middleware.Authentication,
+  ColumnController.FindManyByTableId,
+);
+
+router.get(
   "/tables/:tableId/columns/:id",
   Middleware.Authentication,
   ColumnController.Show,
 );
 
-router.get(
-  "/tables/:tableId/columns",
-  Middleware.Authentication,
-  ColumnController.FindManyByTableId,
-);
+
 
 export { router as columnRoutes };

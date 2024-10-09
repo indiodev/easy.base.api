@@ -6,8 +6,14 @@ export async function FindManyByTableId(
   request: Request,
   response: Response,
 ): Promise<Response> {
-  const { tableId } = request.params;
-  const factory = ColumnFactory();
-  const result = await factory.findManyByTableId(tableId);
-  return response.status(200).json(result);
+  
+  try{
+    const { tableId } = request.params;
+    const factory = ColumnFactory();
+    const result = await factory.findManyByTableId(tableId);
+    return response.status(200).json(result);
+  }catch(error){
+    console.log(error);
+    return response.status(400).json(error);
+  }
 }

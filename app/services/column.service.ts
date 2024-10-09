@@ -23,7 +23,7 @@ export class ColumnService {
       identifier: payload.column.title!,
       type: payload.column.type,
       slug: slugify(payload.column.title!),
-      config: payload.column.config,
+      config: payload?.column?.config,
     };
 
     const old =
@@ -75,11 +75,13 @@ export class ColumnService {
         cause: "COLUMN_NOT_FOUND",
       });
 
+    const newCol = <Column>payload.column
+    newCol.slug = slugify(newCol.title!);
 
     const columns = table.columns.map((c) => {
 
       if (c._id.toString() === payload?.column?._id?.toString())
-        return payload.column
+        return newCol
 
       return c;
     });
@@ -105,8 +107,6 @@ export class ColumnService {
         cause: "TABLE_NOT_FOUND",
       });
 
-    // const column = table.columns.find((column) => column._id === query.columnId);
-
     const column = table.columns.find(
       (column) => column._id.toString() === query.columnId.toString(),
     );
@@ -122,10 +122,15 @@ export class ColumnService {
   }
 
   async findManyByTableId(tableId: string): Promise<Partial<Column>[]> {
+    
     const table = await this.tableRepository.findUnique({ _id: tableId });
+    if (!table)
+      throw new ApplicationException({
+        code: 404,
+        message: "Coluna não encontrada.",
+        cause: "COLUMN_NOT_FOUND",
+      });
 
-    if (!table) throw new Error("Tabela não encontrada.");
-
-    return table?.columns || [];
+    return table.columns || [];
   }
 }
