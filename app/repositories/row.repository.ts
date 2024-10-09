@@ -17,10 +17,14 @@ export class RowRepository {
     if (!table) {
       throw new Error("Table not found");
     }
+    
+
+    const relationalColumns = table.columns.filter(column => column.type === 'RELATIONAL');
+    const populateFields = relationalColumns.map(column => column.slug).join(' ');
 
     const CollectionModel = this.getCollectionModel(table);
 
-    const row = (await CollectionModel.findById(args.id).exec()) as any;
+    const row = (await CollectionModel.findById(args.id).populate(populateFields).exec()) as any;
 
     if (!row) {
       return null;
@@ -101,6 +105,8 @@ export class RowRepository {
     if (!schema) {
       throw new Error("Collection schema not found");
     }
+
+
 
     return createDynamicModel(
       collectionName,
