@@ -23,7 +23,7 @@ export class ColumnService {
       identifier: payload.column.title!,
       type: payload.column.type,
       slug: slugify(payload.column.title!),
-      config: payload.column.config,
+      config: payload?.column?.config,
     };
 
     const old =
@@ -57,38 +57,40 @@ export class ColumnService {
       _id: payload.tableId,
     });
 
-    const exist = table?.columns?.find(
-      (c) => JSON.stringify(c._id) === JSON.stringify(payload.column._id),
+    if (!table)
+      throw new ApplicationException({
+        code: 404,
+        message: "Tabela não encontrada.",
+        cause: "COLUMN_NOT_FOUND",
+      });
+
+    const column = table.columns.find(
+      (column) => column._id.toString() === payload.column?._id?.toString(),
+
     );
 
-    if (!exist)
+    if (!column)
       throw new ApplicationException({
-        code: 400,
+        code: 404,
         message: "Coluna não encontrada.",
         cause: "COLUMN_NOT_FOUND",
       });
 
-    const columns = table?.columns.map((c) => {
-      if (JSON.stringify(c._id) === JSON.stringify(payload?.column?._id)) {
-        return {
-          _id: c._id,
-          slug: c.slug,
-          config: c.config,
-          title: c.title,
-          identifier: c.identifier,
-          type: c.type,
-          data: c.data,
-          status: c.status,
-          created_at: c.created_at,
-          updated_at: c.updated_at,
-          deleted_at: c.deleted_at,
-          ...payload.column,
-        };
-      }
+    const newCol = <Column>payload.column
+    newCol.slug = slugify(newCol.title!);
+
+    const columns = table.columns.map((c) => {
+
+      if (c._id.toString() === payload?.column?._id?.toString())
+        return newCol
+
 
       return c;
     });
 
+    console.log(columns)
+
+  
     await this.tableRepository.update(payload.tableId, {
       columns,
     });
@@ -107,8 +109,6 @@ export class ColumnService {
         cause: "TABLE_NOT_FOUND",
       });
 
-    // const column = table.columns.find((column) => column._id === query.columnId);
-
     const column = table.columns.find(
       (column) => column._id.toString() === query.columnId.toString(),
     );
@@ -124,10 +124,15 @@ export class ColumnService {
   }
 
   async findManyByTableId(tableId: string): Promise<Partial<Column>[]> {
+    
     const table = await this.tableRepository.findUnique({ _id: tableId });
+    if (!table)
+      throw new ApplicationException({
+        code: 404,
+        message: "Coluna não encontrada.",
+        cause: "COLUMN_NOT_FOUND",
+      });
 
-    if (!table) throw new Error("Tabela não encontrada.");
-
-    return table?.columns || [];
+    return table.columns || [];
   }
 }

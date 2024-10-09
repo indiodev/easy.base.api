@@ -46,6 +46,7 @@ export class TableRepository {
             [item.slug]: {
               type: getColumnDataType(item.type),
               required: item.config?.required || false,
+              ...(item.type === "RELATIONAL" && { ref: item.config.relation.collection })
             },
           }))
           .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
@@ -80,6 +81,7 @@ export class TableRepository {
             [item.slug]: {
               type: getColumnDataType(item.type),
               required: item.config?.required || false,
+              ...(item.type === "RELATIONAL" && { ref: item.config.relation.collection })
             },
           }))
           .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})

@@ -7,9 +7,10 @@ export async function Update(
   response: Response,
 ): Promise<Response> {
   const factory = ColumnFactory();
+
   try {
     await factory.update({
-      column: { _id: request.params.id, ...request.body.column },
+      column: request.body.column,
       tableId: request.body.tableId,
     });
   } catch (error) {
