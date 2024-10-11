@@ -4,6 +4,17 @@
 ## Resumo
 Esta API permite a manipulação de dados relacionados a usuários, permissões, papéis, grupos, formulários e tabelas. Ela suporta operações de criação, leitura, atualização e exclusão (CRUD).
 
+## Sumário de Rotas
+
+- [1. Usuarios](#1-users)
+- [2. Permissões](#2-roles) (Pendente)
+- [3. Colunas](#3-columns)
+- [4. Formulários](#4-forms) (Pendente)
+- [5. Linhas](#5-rows)
+- [6. Tabelas](#6-tables)
+- [7. Configurações](#7-settings) (Pendente)
+- [8. Autenticação](#8-authentication)
+
 ### Autenticação
 Os endpoints requerem autenticação com **Bearer Token**.
 
