@@ -4,7 +4,7 @@ import { RowRepository } from "@repositories/row.repository";
 export class RowService {
   constructor(private rowRepository: RowRepository) {}
 
-  async findMany(query: {
+  async findManyByCollection(query: {
     data_collection: string;
     columnId: string;
   }): Promise<any> {
