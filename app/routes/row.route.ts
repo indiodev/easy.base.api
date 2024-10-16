@@ -31,7 +31,7 @@ router.get(
 router.get(
   "/tables/:data_collection/column/:columnId/row",
   Middleware.Authentication,
-  RowController.FindMany,
+  RowController.findManyByCollection,
 );
 
 router.delete(
