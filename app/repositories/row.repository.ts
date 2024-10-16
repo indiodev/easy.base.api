@@ -12,19 +12,55 @@ export interface IRowRepository {
 }
 
 export class RowRepository {
+  async findManyByCollection(query: {
+    data_collection: string;
+    columnId: string;
+  }): Promise<any> {
+    console.log(query);
+    try {
+      const table = await Models.Table.findOne({
+        data_collection: query.data_collection,
+      }).exec();
+
+      if (!table) {
+        throw new Error("Table not found");
+      }
+
+      const CollectionModel = this.getCollectionModel(table);
+
+      const column = table.columns.find(
+        (column) =>
+          JSON.stringify(column._id) === JSON.stringify(query.columnId),
+      );
+
+      if (!column) {
+        throw new Error("Relational column not found");
+      }
+
+      return await CollectionModel.find({}, { [column.slug!]: 1 }).exec();
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async show(args: IRowRepository): Promise<any | null> {
     const table = await Models.Table.findById(args.tableId).exec();
     if (!table) {
       throw new Error("Table not found");
     }
-    
 
-    const relationalColumns = table.columns.filter(column => column.type === 'RELATIONAL');
-    const populateFields = relationalColumns.map(column => column.slug).join(' ');
+    const relationalColumns = table.columns.filter(
+      (column) => column.type === "RELATIONAL",
+    );
+
+    const populateFields = relationalColumns
+      .map((column) => column.slug)
+      .join(" ");
 
     const CollectionModel = this.getCollectionModel(table);
 
-    const row = (await CollectionModel.findById(args.id).populate(populateFields).exec()) as any;
+    const row = (await CollectionModel.findById(args.id)
+      .populate(populateFields)
+      .exec()) as any;
 
     if (!row) {
       return null;
@@ -104,8 +140,6 @@ export class RowRepository {
     if (!schema) {
       throw new Error("Collection schema not found");
     }
-
-
 
     return createDynamicModel(
       collectionName,
