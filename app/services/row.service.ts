@@ -4,6 +4,13 @@ import { RowRepository } from "@repositories/row.repository";
 export class RowService {
   constructor(private rowRepository: RowRepository) {}
 
+  async findManyByCollection(query: {
+    data_collection: string;
+    columnId: string;
+  }): Promise<any> {
+    return await this.rowRepository.findManyByCollection(query);
+  }
+
   async show({ id, tableId }: any): Promise<RowDocument> {
     return await this.rowRepository.show({
       id,
@@ -12,6 +19,7 @@ export class RowService {
   }
 
   async create({ tableId, ...payload }: any): Promise<RowDocument> {
+    console.log({ tableId, ...payload });
     return await this.rowRepository.create({
       data: {
         value: { ...payload },

@@ -28,6 +28,12 @@ router.get(
   RowController.Show,
 );
 
+router.get(
+  "/tables/:data_collection/column/:columnId/row",
+  Middleware.Authentication,
+  RowController.findManyByCollection,
+);
+
 router.delete(
   "/tables/:tableId/row/:id",
   Middleware.Authentication,
