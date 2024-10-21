@@ -90,6 +90,8 @@ export class RowRepository {
 
     const CollectionModel = this.getCollectionModel(table);
 
+    console.log(CollectionModel);
+
     return await CollectionModel.create(rowWithoutTableId);
   }
 
