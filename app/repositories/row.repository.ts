@@ -130,6 +130,39 @@ export class RowRepository {
     return await CollectionModel.deleteMany(args.data).exec();
   }
 
+  async search(args: { tableId: string; searchText: string }): Promise<any[]> {
+    const table = await Models.Table.findById(args.tableId).exec();
+    if (!table) {
+      throw new Error("Table not found");
+    }
+
+    const relationalColumns = table.columns.filter(
+      (column) => column.type === "RELATIONAL",
+    );
+
+    const populateFields = relationalColumns
+      .map((column) => column.slug)
+      .join(" ");
+
+    const CollectionModel = this.getCollectionModel(table);
+
+    const searchQuery = {
+      $text: { $search: args.searchText },
+    };
+
+    const rows = await CollectionModel.find(searchQuery)
+      .populate(populateFields)
+      .exec();
+
+    return rows.map((row: any) => ({
+      _id: row._id,
+      value: row,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
+    }));
+  }
+
+
   private getCollectionModel(table: TableDocument): Model<mongoose.Document> {
     const collectionName = table.data_collection;
     if (!collectionName) {
