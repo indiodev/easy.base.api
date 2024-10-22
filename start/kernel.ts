@@ -8,14 +8,19 @@ const app = express();
 
 connectDatabase();
 
+// app.use(cors({
+//   origin: 'http://localhost:3000',
+//   methods: '*',
+//   credentials: true,
+// }));
 app.use(
   cors({
     origin:
       Env.NODE_ENV === "development"
-        ? `http://localhost:${Env.PORT}`
+        ? "http://localhost:5173"
         : "https://gbd-client-five.vercel.app",
     methods: "*",
-    credentials: false,
+    credentials: true,
   }),
 );
 
