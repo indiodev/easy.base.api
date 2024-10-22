@@ -12,8 +12,8 @@ app.use(
   cors({
     origin:
       Env.NODE_ENV === "development"
-        ? "*"
-        : "https://gbd-client-five.vercel.app/",
+        ? `http://localhost:${Env.PORT}`
+        : "https://gbd-client-five.vercel.app",
     methods: "*",
     credentials: false,
   }),
