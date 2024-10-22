@@ -10,8 +10,8 @@ export async function Show(
     const factory = TableFactory();
     const result = await factory.show(request.params.id);
     return response.status(200).json(result);
-  }catch(error){
-    console.log(error);
+  } catch (error) {
+    console.error(error);
     return response.status(400).json(error);
   }
 }

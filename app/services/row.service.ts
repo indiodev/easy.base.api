@@ -23,7 +23,6 @@ export class RowService {
   }
 
   async create({ tableId, ...payload }: any): Promise<RowDocument> {
-    console.log({ tableId, ...payload });
     return await this.rowRepository.create({
       data: {
         value: { ...payload },

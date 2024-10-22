@@ -66,7 +66,6 @@ export class ColumnService {
 
     const column = table.columns.find(
       (column) => column._id.toString() === payload.column?._id?.toString(),
-
     );
 
     if (!column)
@@ -76,21 +75,15 @@ export class ColumnService {
         cause: "COLUMN_NOT_FOUND",
       });
 
-    const newCol = <Column>payload.column
+    const newCol = <Column>payload.column;
     newCol.slug = slugify(newCol.title!);
 
     const columns = table.columns.map((c) => {
-
-      if (c._id.toString() === payload?.column?._id?.toString())
-        return newCol
-
+      if (c._id.toString() === payload?.column?._id?.toString()) return newCol;
 
       return c;
     });
 
-    console.log(columns)
-
-  
     await this.tableRepository.update(payload.tableId, {
       columns,
     });
@@ -124,7 +117,6 @@ export class ColumnService {
   }
 
   async findManyByTableId(tableId: string): Promise<Partial<Column>[]> {
-    
     const table = await this.tableRepository.findUnique({ _id: tableId });
     if (!table)
       throw new ApplicationException({

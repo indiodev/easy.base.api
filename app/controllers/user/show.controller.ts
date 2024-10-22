@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 
 import { UserFactory } from "@factories/user.factory";
+import { CustomRequest } from "@middleware/authentication.middleware";
 
 export async function Show(
-  request: Request,
+  request: CustomRequest,
   response: Response,
 ): Promise<Response> {
   const factory = UserFactory();

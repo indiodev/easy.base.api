@@ -16,7 +16,6 @@ export class RowRepository {
     data_collection: string;
     columnId: string;
   }): Promise<any> {
-    console.log(query);
     try {
       const table = await Models.Table.findOne({
         data_collection: query.data_collection,
@@ -39,7 +38,7 @@ export class RowRepository {
 
       return await CollectionModel.find({}, { [column.slug!]: 1 }).exec();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
   async show(args: IRowRepository): Promise<any | null> {

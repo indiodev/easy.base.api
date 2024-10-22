@@ -27,7 +27,7 @@ export class UserRepository {
   async findMany(
     filter: FilterQuery<UserDocument> = {},
   ): Promise<UserDocument[]> {
-    return await Models.User.find(filter).exec();
+    return await Models.User.find(filter).select("-password").exec();
   }
 
   // Atualiza um usuário com base no ID e dados de atualização (similar ao `update`)

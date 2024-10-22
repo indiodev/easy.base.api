@@ -1,18 +1,13 @@
 import { UserDocument as User } from "@config/mongoose/schema";
-import { UserCreate, UserUpdate } from "@dto/user.dto";
+import { UserCreate, UserTableUpdate, UserUpdate } from "@dto/user.dto";
 import { UserRepository } from "@repositories/user.repository";
 
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
   async show(id: string): Promise<User> {
-    const user = await this.userRepository.findFirst({
-      where: { id },
-      include: {
-        role: true,
-        group: true,
-        reviews: true,
-      },
+    const user = await this.userRepository.findUnique({
+      _id: id,
     });
 
     if (!user) throw new Error("Usuário não encontrado.");
@@ -23,15 +18,9 @@ export class UserService {
   }
 
   async list(): Promise<Partial<User>[]> {
-    const users = await this.userRepository.findMany({
-      include: {
-        role: true,
-        group: true,
-        reviews: true,
-      },
-    });
+    const users = await this.userRepository.findMany({});
 
-    return users.map(({ password, ...user }) => user);
+    return users;
   }
 
   async create(payload: UserCreate): Promise<Partial<User>> {
@@ -52,5 +41,32 @@ export class UserService {
 
   async delete(id: string): Promise<User | null> {
     return await this.userRepository.delete(id);
+  }
+
+  async tableLayoutView({
+    id,
+    tableId,
+    layout,
+  }: UserTableUpdate): Promise<void> {
+    const user = await this.userRepository.findUnique({
+      _id: id!,
+    });
+
+    const config = user?.config || {};
+    const table = user?.config?.table ?? {};
+    const path = table[tableId!] || {};
+
+    await this.userRepository.update(id!, {
+      config: {
+        ...config,
+        table: {
+          ...table,
+          [tableId!]: {
+            ...path,
+            layout,
+          },
+        },
+      },
+    });
   }
 }

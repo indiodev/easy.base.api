@@ -67,6 +67,7 @@ const UserSchema = new Schema({
   rows: [{ type: mongoose.Schema.Types.ObjectId, ref: "Row" }],
   role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
   forms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Form" }],
+  config: { type: Schema.Types.Mixed },
 });
 
 // Column Type
@@ -211,6 +212,7 @@ export interface UserDocument extends Document {
   rows?: Schema.Types.ObjectId[];
   role?: Schema.Types.ObjectId;
   formIds?: Schema.Types.ObjectId[];
+  config?: any;
 }
 
 export interface TableDocument extends Document {
