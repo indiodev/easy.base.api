@@ -12,10 +12,10 @@ app.use(
   cors({
     origin:
       Env.NODE_ENV === "development"
-        ? "*"
-        : "https://gbd-client-five.vercel.app/",
+        ? "http://localhost:5173"
+        : "https://gbd-client-five.vercel.app",
     methods: "*",
-    credentials: false,
+    credentials: true,
   }),
 );
 
