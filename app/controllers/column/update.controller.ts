@@ -14,7 +14,7 @@ export async function Update(
       tableId: request.body.tableId,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return response.status(400).json(error);
   }
 

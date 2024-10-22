@@ -23,15 +23,9 @@ export class UserService {
   }
 
   async list(): Promise<Partial<User>[]> {
-    const users = await this.userRepository.findMany({
-      include: {
-        role: true,
-        group: true,
-        reviews: true,
-      },
-    });
+    const users = await this.userRepository.findMany({});
 
-    return users.map(({ password, ...user }) => user);
+    return users;
   }
 
   async create(payload: UserCreate): Promise<Partial<User>> {

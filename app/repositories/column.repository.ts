@@ -5,7 +5,7 @@ import { Models } from "@config/mongoose/schema";
 
 export class ColumnRepository {
   constructor(table: any) {
-    mongoose.connect(Env.DATABASE_URL).then(() => console.log("Connected!"));
+    mongoose.connect(Env.DATABASE_URL).then(() => console.info("Connected!"));
   }
 
   async delete(args: any): Promise<any> {

@@ -5,7 +5,7 @@ import { RoleDocument } from "@config/mongoose/schema"; // Importando o modelo R
 
 export class RoleRepository {
   constructor(private roleModel: Model<RoleDocument>) {
-    mongoose.connect(Env.DATABASE_URL).then(() => console.log("Connected!"));
+    mongoose.connect(Env.DATABASE_URL).then(() => console.info("Connected!"));
   }
 
   // Método para buscar múltiplos roles

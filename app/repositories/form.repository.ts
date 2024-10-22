@@ -7,7 +7,9 @@ type FormType = typeof Form;
 
 export class FormRepository {
   constructor(private formModel: Model<FormDocument>) {
-    mongoose.connect(Env.DATABASE_URL).then(() => console.log("Connected!"));
+    mongoose
+      .connect(Env.DATABASE_URL)
+      .then(() => console.info("Database Connected!"));
   } // Model do Mongoose injetado
 
   // Método para criar um novo formulário
