@@ -55,11 +55,14 @@ export class RowRepository {
       .map((column) => column.slug)
       .join(" ");
 
+
     const CollectionModel = this.getCollectionModel(table);
 
     const row = (await CollectionModel.findById(args.id)
       .populate(populateFields)
       .exec()) as any;
+
+    console.log(row)
 
     if (!row) {
       return null;
@@ -86,6 +89,8 @@ export class RowRepository {
     if (!table) {
       throw new Error("Table not found");
     }
+
+    console.log(rowWithoutTableId)
 
     const CollectionModel = this.getCollectionModel(table);
 

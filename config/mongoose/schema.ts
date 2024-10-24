@@ -216,6 +216,7 @@ export interface UserDocument extends Document {
 }
 
 export interface TableDocument extends Document {
+  _id: Schema.Types.ObjectId;
   title: string;
   identifier: string;
   rows: any[] | RowDocument[];
