@@ -39,4 +39,11 @@ router.delete(
   Middleware.Authentication,
   RowController.Delete,
 );
+
+router.post(
+  "/tables/interact/:tableId/row/:id",
+  Middleware.Authentication,
+  RowController.Interaction,
+);
+
 export { router as rowRoutes };
