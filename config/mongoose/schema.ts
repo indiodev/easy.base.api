@@ -155,6 +155,7 @@ const TableSchema = new Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
+
 // Models
 const Role = mongoose.model<RoleDocument>("Role", RoleSchema, "Role");
 const Setting = mongoose.model("Setting", SettingSchema, "Setting");
@@ -175,6 +176,12 @@ const FormSubmissions = mongoose.model<FormSubmissionsDocument>(
   FormSubmissionsSchema,
   "FormSubmissions",
 );
+
+export interface InteractionDocument extends Document {
+  userId: any;
+  value: any;
+  timestamp: Date;
+}
 
 export interface RoleDocument extends Document {
   role: keyof typeof UserRole;
