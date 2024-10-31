@@ -18,8 +18,8 @@ export class RowService {
     });
   }
 
-  async search({tableId, query}: any): Promise<RowDocument[]> {
-    return await this.rowRepository.search({searchText: query, tableId});
+  async search({ tableId, query }: any): Promise<RowDocument[]> {
+    return await this.rowRepository.search({ searchText: query, tableId });
   }
 
   async create({ tableId, ...payload }: any): Promise<RowDocument> {

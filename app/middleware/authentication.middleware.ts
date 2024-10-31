@@ -3,7 +3,7 @@ import { verify } from "jsonwebtoken";
 
 import { ApplicationException } from "@exceptions/application.exception";
 import { Authentication } from "@util/authentication";
-interface CustomRequest extends ExpressRequest {
+export interface CustomRequest extends ExpressRequest {
   user?: {
     id: string;
   };
