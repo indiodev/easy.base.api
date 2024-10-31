@@ -9,15 +9,36 @@ import { Models, TableDocument } from "@config/mongoose/schema"; // Importando o
 export class TableRepository {
   // Encontrar um único documento por ID ou qualquer outro critério
   // WIP - Work in progress
-  async findUnique(filter: any): Promise<TableDocument | null> {
-    const table = await Models.Table.findOne(filter).exec();
+  async findUnique({
+    _id,
+    page,
+    limit,
+    ...query
+  }: {
+    _id: string;
+    page: number;
+    limit: number;
+    [key: string]: number | string | boolean;
+  }): Promise<TableDocument | null> {
+    const table = await Models.Table.findOne({ _id }).exec();
 
     if (table && table.data_collection && table.schema) {
       const CollectionModal = createDynamicModel(
         table.data_collection!,
         table.schema,
       );
-      const rows = await CollectionModal.find().exec();
+
+      const skip = (page - 1) * limit;
+
+      // const countDocuments = await CollectionModal.countDocuments(query).exec();
+
+      // const pages = Math.ceil(countDocuments / limit);
+
+      const rows = await CollectionModal.find(query)
+        .skip(skip)
+        .limit(limit)
+        .exec();
+
       table.rows = rows.map((row: any) => ({
         _id: row._id,
         value: row,
@@ -27,6 +48,29 @@ export class TableRepository {
     }
 
     return table;
+  }
+
+  async count({
+    _id,
+    ...query
+  }: {
+    _id: string;
+    [key: string]: number | string | boolean;
+  }): Promise<{ total: number }> {
+    const table = await Models.Table.findOne({ _id }).exec();
+
+    if (table && table.data_collection && table.schema) {
+      const CollectionModal = createDynamicModel(
+        table.data_collection!,
+        table.schema,
+      );
+
+      const total = await CollectionModal.countDocuments(query).exec();
+
+      return { total };
+    }
+
+    return { total: 0 };
   }
 
   // Encontrar múltiplos documentos com base em um filtro

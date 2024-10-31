@@ -7,8 +7,32 @@ export async function Show(
   response: Response,
 ): Promise<Response> {
   try {
+    console.log({ id: request.params.id }, "CHAMOU AQUI");
     const factory = TableFactory();
-    const result = await factory.show(request.params.id);
+
+    const query = request.query;
+    const limit = Number(request.query.limit ?? 10);
+    const page = Number(request.query.page ?? 1);
+
+    delete query.limit;
+    delete query.page;
+
+    console.log({
+      id: request.params.id,
+      limit,
+      page,
+      ...query,
+    });
+
+    const result = await factory.show({
+      id: request.params.id,
+      limit,
+      page,
+      ...query,
+    });
+
+    console.log(result);
+
     return response.status(200).json(result);
   } catch (error) {
     console.error(error);

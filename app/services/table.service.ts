@@ -1,8 +1,10 @@
+import { console } from "inspector";
+
 import { TableDocument as Table } from "@config/mongoose/schema";
 import { ColumnRepository } from "@repositories/column.repository";
 import { RowRepository } from "@repositories/row.repository";
 import { TableRepository } from "@repositories/table.repository";
-import { slugify } from "@util/validators";
+import { accentInsensitiveRegex, slugify } from "@util/validators";
 
 export class TableService {
   constructor(
@@ -11,12 +13,71 @@ export class TableService {
     private columnRepository: ColumnRepository,
   ) {}
 
-  async show(id: string): Promise<Table> {
-    const table = await this.tableRepository.findUnique({ _id: id });
+  async show({
+    id,
+    page,
+    limit,
+    ...query
+  }: {
+    id: string;
+    [key: string]: string | number | boolean;
+    page: number;
+    limit: number;
+  }): Promise<Table> {
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    console.log({ id, page, limit, query });
+    const hasQuery = Object.keys(query).length > 0;
+
+    if (!hasQuery) {
+      const table = await this.tableRepository.findUnique({
+        _id: id,
+        page,
+        limit,
+      });
+
+      if (!table) throw new Error("Tabela não encontrada.");
+
+      const { total } = await this.tableRepository.count({
+        _id: id,
+      });
+
+      console.log({ id, page, limit, query, total });
+
+      return { table, total };
+    }
+
+    const caseInsensitiveQuery: Record<string, any> = {} as Record<string, any>;
+
+    for (const key in query) {
+      const regexValue = accentInsensitiveRegex(
+        String(query[key]).toLowerCase(),
+      );
+      const value = query[key];
+      if (typeof value === "string")
+        caseInsensitiveQuery[key] = {
+          $regex: `.*${regexValue}.*`,
+          $options: "i",
+        };
+      else caseInsensitiveQuery[key] = value;
+    }
+
+    const table = await this.tableRepository.findUnique({
+      _id: id,
+      ...caseInsensitiveQuery,
+      page,
+      limit,
+    });
 
     if (!table) throw new Error("Tabela não encontrada.");
 
-    return table;
+    const { total } = await this.tableRepository.count({
+      _id: id,
+      ...caseInsensitiveQuery,
+    });
+
+    console.log({ id, page, limit, query, total });
+
+    return { table, total };
   }
 
   async list(): Promise<Table[]> {
