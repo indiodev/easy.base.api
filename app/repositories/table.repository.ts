@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Schema, Types } from "mongoose";
 
 import createDynamicModel, {
   generateCollectionName,
@@ -11,15 +11,12 @@ export class TableRepository {
   // WIP - Work in progress
   async findUnique({
     _id,
+    per_page,
     page,
-    limit,
     ...query
-  }: {
-    _id: string;
-    page: number;
-    limit: number;
-    [key: string]: number | string | boolean;
-  }): Promise<TableDocument | null> {
+  }: Partial<
+    Record<string, Schema.Types.ObjectId | string | number>
+  >): Promise<TableDocument | null> {
     const table = await Models.Table.findOne({ _id }).exec();
 
     if (table && table.data_collection && table.schema) {
@@ -28,18 +25,19 @@ export class TableRepository {
         table.schema,
       );
 
-      const skip = (page - 1) * limit;
+      let rows: any[] = [];
+      console.log({ page, per_page });
+      if (page && per_page) {
+        const skip = (Number(page) - 1) * Number(per_page);
+        rows = await CollectionModal.find(query)
+          .skip(skip)
+          .limit(Number(per_page))
+          .exec();
+      }
 
-      // const countDocuments = await CollectionModal.countDocuments(query).exec();
+      if (!page && !per_page) rows = await CollectionModal.find(query).exec();
 
-      // const pages = Math.ceil(countDocuments / limit);
-
-      const rows = await CollectionModal.find(query)
-        .skip(skip)
-        .limit(limit)
-        .exec();
-
-      table.rows = rows.map((row: any) => ({
+      table.rows = rows?.map((row: any) => ({
         _id: row._id,
         value: row,
         created_at: row.created_at,
@@ -53,10 +51,9 @@ export class TableRepository {
   async count({
     _id,
     ...query
-  }: {
-    _id: string;
-    [key: string]: number | string | boolean;
-  }): Promise<{ total: number }> {
+  }: Partial<
+    Record<string, Schema.Types.ObjectId | string | number>
+  >): Promise<{ total: number }> {
     const table = await Models.Table.findOne({ _id }).exec();
 
     if (table && table.data_collection && table.schema) {

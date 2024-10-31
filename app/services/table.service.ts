@@ -1,7 +1,4 @@
-import { console } from "inspector";
-
 import { TableDocument as Table } from "@config/mongoose/schema";
-import { ColumnRepository } from "@repositories/column.repository";
 import { RowRepository } from "@repositories/row.repository";
 import { TableRepository } from "@repositories/table.repository";
 import { accentInsensitiveRegex, slugify } from "@util/validators";
@@ -10,29 +7,25 @@ export class TableService {
   constructor(
     private tableRepository: TableRepository,
     private rowRepository: RowRepository,
-    private columnRepository: ColumnRepository,
   ) {}
 
   async show({
     id,
     page,
-    limit,
+    per_page,
     ...query
-  }: {
-    id: string;
-    [key: string]: string | number | boolean;
-    page: number;
-    limit: number;
-  }): Promise<Table> {
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    console.log({ id, page, limit, query });
+  }: Partial<Record<string, string | number>>): Promise<{
+    table: Table;
+    meta: Record<string, number | string>;
+  }> {
     const hasQuery = Object.keys(query).length > 0;
 
     if (!hasQuery) {
+      console.log("Linha 24!");
       const table = await this.tableRepository.findUnique({
         _id: id,
-        page,
-        limit,
+        page: Number(page),
+        per_page: Number(per_page),
       });
 
       if (!table) throw new Error("Tabela não encontrada.");
@@ -41,10 +34,21 @@ export class TableService {
         _id: id,
       });
 
-      console.log({ id, page, limit, query, total });
+      const last_page = Math.ceil(total / Number(per_page));
 
-      return { table, total };
+      return {
+        table,
+        meta: {
+          total,
+          per_page: Number(per_page),
+          page: Number(page),
+          last_page,
+          first_page: 1,
+        },
+      };
     }
+
+    console.log("Linha 50!");
 
     const caseInsensitiveQuery: Record<string, any> = {} as Record<string, any>;
 
@@ -63,9 +67,9 @@ export class TableService {
 
     const table = await this.tableRepository.findUnique({
       _id: id,
+      page: Number(page),
+      per_page: Number(per_page),
       ...caseInsensitiveQuery,
-      page,
-      limit,
     });
 
     if (!table) throw new Error("Tabela não encontrada.");
@@ -75,9 +79,18 @@ export class TableService {
       ...caseInsensitiveQuery,
     });
 
-    console.log({ id, page, limit, query, total });
+    const last_page = Math.ceil(total / Number(per_page));
 
-    return { table, total };
+    return {
+      table,
+      meta: {
+        total,
+        per_page: Number(per_page),
+        page: Number(page),
+        last_page,
+        first_page: 1,
+      },
+    };
   }
 
   async list(): Promise<Table[]> {

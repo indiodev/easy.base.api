@@ -7,33 +7,24 @@ export async function Show(
   response: Response,
 ): Promise<Response> {
   try {
-    console.log({ id: request.params.id }, "CHAMOU AQUI");
     const factory = TableFactory();
 
     const query = request.query;
-    const limit = Number(request.query.limit ?? 10);
-    const page = Number(request.query.page ?? 1);
 
-    delete query.limit;
+    const page = Number(request.query.page ?? 1);
+    const per_page = Number(request.query.per_page ?? 10);
+
+    delete query.per_page;
     delete query.page;
 
-    console.log({
+    const { meta, table } = await factory.show({
       id: request.params.id,
-      limit,
+      per_page,
       page,
       ...query,
     });
 
-    const result = await factory.show({
-      id: request.params.id,
-      limit,
-      page,
-      ...query,
-    });
-
-    console.log(result);
-
-    return response.status(200).json(result);
+    return response.status(200).json({ data: table, meta });
   } catch (error) {
     console.error(error);
     return response.status(400).json(error);

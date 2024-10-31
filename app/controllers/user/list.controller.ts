@@ -7,8 +7,6 @@ export async function List(
   request: CustomRequest,
   response: Response,
 ): Promise<Response> {
-  console.log({ id: request?.user?.id });
-
   const factory = UserFactory();
   const result = await factory.list();
   return response.status(200).json(result);

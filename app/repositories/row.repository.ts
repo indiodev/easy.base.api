@@ -55,14 +55,11 @@ export class RowRepository {
       .map((column) => column.slug)
       .join(" ");
 
-
     const CollectionModel = this.getCollectionModel(table);
 
     const row = (await CollectionModel.findById(args.id)
       .populate(populateFields)
       .exec()) as any;
-
-    console.log(row)
 
     if (!row) {
       return null;
@@ -89,8 +86,6 @@ export class RowRepository {
     if (!table) {
       throw new Error("Table not found");
     }
-
-    console.log(rowWithoutTableId)
 
     const CollectionModel = this.getCollectionModel(table);
 
@@ -165,7 +160,6 @@ export class RowRepository {
       updated_at: row.updated_at,
     }));
   }
-
 
   private getCollectionModel(table: TableDocument): Model<mongoose.Document> {
     const collectionName = table.data_collection;
