@@ -47,16 +47,18 @@ export class RowRepository {
       throw new Error("Table not found");
     }
 
+   
+
+
+    const CollectionModel = this.getCollectionModel(table);
+
     const relationalColumns = table.columns.filter(
-      (column) => column.type === "RELATIONAL",
+      (column) => ["RELATIONAL", "MULTI_RELATIONAL"].includes(column.type!) 
     );
 
     const populateFields = relationalColumns
       .map((column) => column.slug)
       .join(" ");
-
-
-    const CollectionModel = this.getCollectionModel(table);
 
     const row = (await CollectionModel.findById(args.id)
       .populate(populateFields)
@@ -83,6 +85,7 @@ export class RowRepository {
       ...args.data!.value,
       _id: new Types.ObjectId(),
     };
+
     delete rowWithoutTableId.tableId;
 
     const table = await Models.Table.findById(args.tableId).exec();
@@ -90,7 +93,14 @@ export class RowRepository {
       throw new Error("Table not found");
     }
 
-    console.log(rowWithoutTableId)
+    const columns = table.columns;
+
+    for (const key in rowWithoutTableId) {
+      const column = columns.find((col) => col.slug === key);
+      if (column && column.type === "MULTI_RELATIONAL") {
+      rowWithoutTableId[key] = rowWithoutTableId[key].split(",");
+      }
+    }
 
     const CollectionModel = this.getCollectionModel(table);
 
@@ -104,6 +114,16 @@ export class RowRepository {
     if (!table) {
       throw new Error("Table not found");
     }
+
+    const columns = table.columns;
+
+    for (const key in rowWithoutTableId) {
+      const column = columns.find((col) => col.slug === key);
+      if (column && column.type === "MULTI_RELATIONAL") {
+      rowWithoutTableId[key] = rowWithoutTableId[key].split(",");
+      }
+    }
+
 
     const CollectionModel = this.getCollectionModel(table);
 
