@@ -13,11 +13,36 @@ export class TableRepository {
     const table = await Models.Table.findOne(filter).exec();
 
     if (table && table.data_collection && table.schema) {
+
       const CollectionModal = createDynamicModel(
         table.data_collection!,
         table.schema,
       );
-      const rows = await CollectionModal.find().exec();
+
+      const relationalColumns = table.columns.filter(
+        (column) => ["RELATIONAL", "MULTI_RELATIONAL"].includes(column.type!) 
+      );
+
+      let registeredColumns = []
+
+      for (const column of relationalColumns) {
+        const relatedTable = await Models.Table.findOne({ data_collection: column.config.relation.collection }).exec();
+        if (relatedTable && relatedTable.data_collection && relatedTable.schema) {
+          const TemporaryDynamicModel = createDynamicModel(
+            relatedTable.data_collection,
+            relatedTable.schema,
+          );
+          registeredColumns.push(TemporaryDynamicModel);
+        }
+      }
+  
+      const populateFields = relationalColumns
+        .map((column) => column.slug)
+        .join(" ");
+  
+      const rows = await CollectionModal.find({}).populate(populateFields).exec();
+
+
       table.rows = rows.map((row: any) => ({
         _id: row._id,
         value: row,
@@ -43,10 +68,16 @@ export class TableRepository {
     const schemaDefinition = columns.create
       ? columns.create
           .map((item: any) => ({
-            [item.slug]: {
+            [item.slug]: item.type == "MULTI_RELATIONAL" ? [
+              {
+                type: getColumnDataType(item.type),
+                required: item.config?.required || false,
+                ref: item.config.relation.collection,
+              }
+            ]: {
               type: getColumnDataType(item.type),
               required: item.config?.required || false,
-              ...(item.type === "RELATIONAL" && {
+              ...(["RELATIONAL"].includes(item.type) && {
                 ref: item.config.relation.collection,
               }),
             },
@@ -80,10 +111,16 @@ export class TableRepository {
     const schemaDefinition = columns
       ? columns
           .map((item: any) => ({
-            [item.slug]: {
+            [item.slug]: item.type == "MULTI_RELATIONAL" ? [
+              {
+                type: getColumnDataType(item.type),
+                required: item.config?.required || false,
+                ref: item.config.relation.collection,
+              }
+            ]: {
               type: getColumnDataType(item.type),
               required: item.config?.required || false,
-              ...(item.type === "RELATIONAL" && {
+              ...(["RELATIONAL"].includes(item.type) && {
                 ref: item.config.relation.collection,
               }),
             },
