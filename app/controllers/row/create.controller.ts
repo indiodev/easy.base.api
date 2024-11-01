@@ -8,8 +8,6 @@ export async function Create(
 ): Promise<Response> {
   const factory = RowFactory();
 
-  console.log(request.body)
-
   const result = await factory.create({
     tableId: request.params.id,
     ...request.body,
