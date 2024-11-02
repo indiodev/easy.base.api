@@ -1,4 +1,4 @@
-import { Schema, Types } from "mongoose";
+import { Types } from "mongoose";
 
 import createDynamicModel, {
   generateCollectionName,
@@ -9,15 +9,8 @@ import { Models, TableDocument } from "@config/mongoose/schema"; // Importando o
 export class TableRepository {
   // Encontrar um único documento por ID ou qualquer outro critério
   // WIP - Work in progress
-  async findUnique({
-    _id,
-    per_page,
-    page,
-    ...query
-  }: Partial<
-    Record<string, Schema.Types.ObjectId | string | number>
-  >): Promise<TableDocument | null> {
-    const table = await Models.Table.findOne({ _id }).exec();
+  async findUnique(filter: any): Promise<TableDocument | null> {
+    const table = await Models.Table.findOne(filter).exec();
 
     if (table && table.data_collection && table.schema) {
       const CollectionModal = createDynamicModel(
@@ -25,19 +18,38 @@ export class TableRepository {
         table.schema,
       );
 
-      let rows: any[] = [];
-      console.log({ page, per_page });
-      if (page && per_page) {
-        const skip = (Number(page) - 1) * Number(per_page);
-        rows = await CollectionModal.find(query)
-          .skip(skip)
-          .limit(Number(per_page))
-          .exec();
+      const relationalColumns = table.columns.filter((column) =>
+        ["RELATIONAL", "MULTI_RELATIONAL"].includes(column.type!),
+      );
+
+      let registeredColumns = [];
+
+      for (const column of relationalColumns) {
+        const relatedTable = await Models.Table.findOne({
+          data_collection: column.config.relation.collection,
+        }).exec();
+        if (
+          relatedTable &&
+          relatedTable.data_collection &&
+          relatedTable.schema
+        ) {
+          const TemporaryDynamicModel = createDynamicModel(
+            relatedTable.data_collection,
+            relatedTable.schema,
+          );
+          registeredColumns.push(TemporaryDynamicModel);
+        }
       }
 
-      if (!page && !per_page) rows = await CollectionModal.find(query).exec();
+      const populateFields = relationalColumns
+        .map((column) => column.slug)
+        .join(" ");
 
-      table.rows = rows?.map((row: any) => ({
+      const rows = await CollectionModal.find({})
+        .populate(populateFields)
+        .exec();
+
+      table.rows = rows.map((row: any) => ({
         _id: row._id,
         value: row,
         created_at: row.created_at,
@@ -46,28 +58,6 @@ export class TableRepository {
     }
 
     return table;
-  }
-
-  async count({
-    _id,
-    ...query
-  }: Partial<
-    Record<string, Schema.Types.ObjectId | string | number>
-  >): Promise<{ total: number }> {
-    const table = await Models.Table.findOne({ _id }).exec();
-
-    if (table && table.data_collection && table.schema) {
-      const CollectionModal = createDynamicModel(
-        table.data_collection!,
-        table.schema,
-      );
-
-      const total = await CollectionModal.countDocuments(query).exec();
-
-      return { total };
-    }
-
-    return { total: 0 };
   }
 
   // Encontrar múltiplos documentos com base em um filtro
@@ -84,13 +74,22 @@ export class TableRepository {
     const schemaDefinition = columns.create
       ? columns.create
           .map((item: any) => ({
-            [item.slug]: {
-              type: getColumnDataType(item.type),
-              required: item.config?.required || false,
-              ...(item.type === "RELATIONAL" && {
-                ref: item.config.relation.collection,
-              }),
-            },
+            [item.slug]:
+              item.type == "MULTI_RELATIONAL"
+                ? [
+                    {
+                      type: getColumnDataType(item.type),
+                      required: item.config?.required || false,
+                      ref: item.config.relation.collection,
+                    },
+                  ]
+                : {
+                    type: getColumnDataType(item.type),
+                    required: item.config?.required || false,
+                    ...(["RELATIONAL"].includes(item.type) && {
+                      ref: item.config.relation.collection,
+                    }),
+                  },
           }))
           .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
       : null;
@@ -121,13 +120,22 @@ export class TableRepository {
     const schemaDefinition = columns
       ? columns
           .map((item: any) => ({
-            [item.slug]: {
-              type: getColumnDataType(item.type),
-              required: item.config?.required || false,
-              ...(item.type === "RELATIONAL" && {
-                ref: item.config.relation.collection,
-              }),
-            },
+            [item.slug]:
+              item.type == "MULTI_RELATIONAL"
+                ? [
+                    {
+                      type: getColumnDataType(item.type),
+                      required: item.config?.required || false,
+                      ref: item.config.relation.collection,
+                    },
+                  ]
+                : {
+                    type: getColumnDataType(item.type),
+                    required: item.config?.required || false,
+                    ...(["RELATIONAL"].includes(item.type) && {
+                      ref: item.config.relation.collection,
+                    }),
+                  },
           }))
           .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
       : null;
