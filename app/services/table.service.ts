@@ -1,7 +1,7 @@
 import { TableDocument as Table } from "@config/mongoose/schema";
 import { RowRepository } from "@repositories/row.repository";
 import { TableRepository } from "@repositories/table.repository";
-import { accentInsensitiveRegex, slugify } from "@util/validators";
+import { slugify } from "@util/validators";
 
 export class TableService {
   constructor(
@@ -9,6 +9,14 @@ export class TableService {
     private rowRepository: RowRepository,
   ) {}
 
+<<<<<<< HEAD
+  async show(id: string): Promise<Table> {
+    const table = await this.tableRepository.findUnique({ _id: id });
+
+    if (!table) throw new Error("Tabela não encontrada.");
+
+    return table;
+=======
   async show({
     id,
     page,
@@ -91,6 +99,7 @@ export class TableService {
         first_page: 1,
       },
     };
+>>>>>>> 1ea27b6 (feat: pagination tables)
   }
 
   async list(): Promise<Table[]> {

@@ -7,9 +7,12 @@ export async function Create(
   response: Response,
 ): Promise<Response> {
   const factory = RowFactory();
+
   const result = await factory.create({
     tableId: request.params.id,
     ...request.body,
   });
+
+  
   return response.status(200).json(result);
 }
