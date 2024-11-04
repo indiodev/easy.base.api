@@ -1,7 +1,10 @@
 import { ObjectId } from "mongodb";
 import mongoose, { Schema } from "mongoose";
 
-import { ColumnDocument as Column, TableDocument } from "@config/mongoose/schema";
+import {
+  ColumnDocument as Column,
+  TableDocument,
+} from "@config/mongoose/schema";
 import { ApplicationException } from "@exceptions/application.exception";
 import { TableRepository } from "@repositories/table.repository";
 import { slugify } from "@util/validators";
@@ -16,7 +19,7 @@ export class ColumnService {
     const table = await this.tableRepository.findUnique({
       _id: payload.tableId,
     });
-  
+
     if (!table) {
       throw new ApplicationException({
         code: 404,
@@ -24,7 +27,7 @@ export class ColumnService {
         cause: "TABLE_NOT_FOUND",
       });
     }
-  
+
     const column = {
       _id: new ObjectId().toString(),
       title: payload.column.title!,
@@ -33,7 +36,7 @@ export class ColumnService {
       slug: slugify(payload.column.title!),
       config: payload?.column?.config || {},
     };
-  
+
     const oldColumns =
       table?.columns?.map(({ _id, title, type, slug, config }) => ({
         _id,
@@ -42,9 +45,9 @@ export class ColumnService {
         slug,
         config,
       })) || [];
-  
+
     const exist = oldColumns.find(({ slug }) => slug === column.slug);
-  
+
     if (exist) {
       throw new ApplicationException({
         code: 400,
@@ -52,13 +55,12 @@ export class ColumnService {
         cause: "COLUMN_ALREADY_EXISTS",
       });
     }
-  
-    // Update 
+
+    // Update
     await this.tableRepository.update(payload.tableId, {
       columns: [...oldColumns, column],
     });
   }
-  
 
   async update(payload: {
     tableId: string;
@@ -142,32 +144,32 @@ export class ColumnService {
   async createJoinCollectionInDatabase(
     collectionName: string,
     table: TableDocument,
-    targetTable: TableDocument
+    targetTable: TableDocument,
   ): Promise<string> {
     // Define the join collection schema fields
     const joinSchemaFields: any = {};
-  
+
     joinSchemaFields[table._id.toString()] = {
       type: mongoose.Schema.Types.ObjectId,
       ref: table._id,
       required: true,
     };
-  
+
     joinSchemaFields[targetTable._id.toString()] = {
       type: mongoose.Schema.Types.ObjectId,
       ref: targetTable._id,
       required: true,
     };
-  
+
     // Create the join collection schema
     const joinSchema = new mongoose.Schema(joinSchemaFields);
-  
+
     // Register the join collection model
     mongoose.model(collectionName, joinSchema);
-  
+
     // Create the join collection
     await mongoose.connection.createCollection(collectionName);
 
-    return collectionName
+    return collectionName;
   }
 }
