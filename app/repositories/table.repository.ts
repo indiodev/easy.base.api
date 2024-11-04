@@ -1,14 +1,12 @@
-import { Types } from "mongoose";
+import { Schema, Types } from "mongoose";
 
 import createDynamicModel, {
   generateCollectionName,
   getColumnDataType,
 } from "@config/mongoose/functions";
-import { Models, TableDocument } from "@config/mongoose/schema"; // Importando o modelo Mongoose
+import { Models, TableDocument } from "@config/mongoose/schema";
 
 export class TableRepository {
-  // Encontrar um único documento por ID ou qualquer outro critério
-  // WIP - Work in progress
   async findUnique(filter: any): Promise<TableDocument | null> {
     const table = await Models.Table.findOne(filter).exec();
 
@@ -24,10 +22,11 @@ export class TableRepository {
 
       let registeredColumns = [];
 
-      for (const column of relationalColumns) {
+      for await (const column of relationalColumns) {
         const relatedTable = await Models.Table.findOne({
           data_collection: column.config.relation.collection,
         }).exec();
+
         if (
           relatedTable &&
           relatedTable.data_collection &&
@@ -42,7 +41,7 @@ export class TableRepository {
       }
 
       const populateFields = relationalColumns
-        .map((column) => column.slug)
+        .flatMap((column) => column.slug)
         .join(" ");
 
       const rows = await CollectionModal.find({})
@@ -58,6 +57,28 @@ export class TableRepository {
     }
 
     return table;
+  }
+
+  async count({
+    _id,
+    ...query
+  }: Partial<
+    Record<string, Schema.Types.ObjectId | string | number>
+  >): Promise<{ total: number }> {
+    const table = await Models.Table.findOne({ _id }).exec();
+
+    if (table && table.data_collection && table.schema) {
+      const CollectionModal = createDynamicModel(
+        table.data_collection!,
+        table.schema,
+      );
+
+      const total = await CollectionModal.countDocuments(query).exec();
+
+      return { total };
+    }
+
+    return { total: 0 };
   }
 
   // Encontrar múltiplos documentos com base em um filtro
@@ -150,7 +171,7 @@ export class TableRepository {
           columns: columns
             ? columns.map((column: any) => ({
                 ...column,
-                _id: column._id || new Types.ObjectId(),
+                _id: column._id,
               }))
             : undefined,
         },

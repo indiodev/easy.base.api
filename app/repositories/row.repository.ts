@@ -61,8 +61,6 @@ export class RowRepository {
       .populate(populateFields)
       .exec()) as any;
 
-    console.log(row);
-
     if (!row) {
       return null;
     }
@@ -94,6 +92,7 @@ export class RowRepository {
 
     for (const key in rowWithoutTableId) {
       const column = columns.find((col) => col.slug === key);
+
       if (column && column.type === "MULTI_RELATIONAL") {
         rowWithoutTableId[key] = rowWithoutTableId[key].split(",");
       }

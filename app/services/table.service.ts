@@ -9,12 +9,85 @@ export class TableService {
     private rowRepository: RowRepository,
   ) {}
 
-  async show(id: string): Promise<Table> {
-    const table = await this.tableRepository.findUnique({ _id: id });
+  async show({
+    id,
+    page,
+    per_page,
+    ...query
+  }: Partial<Record<string, string | number>>): Promise<{
+    table: Table;
+    meta: Record<string, number | string>;
+  }> {
+    const hasQuery = Object.keys(query).length > 0;
+
+    if (!hasQuery) {
+      const table = await this.tableRepository.findUnique({
+        _id: id,
+        // page: Number(page),
+        // per_page: Number(per_page),
+      });
+
+      if (!table) throw new Error("Tabela não encontrada.");
+
+      const { total } = await this.tableRepository.count({
+        _id: id,
+      });
+
+      const last_page = Math.ceil(total / Number(per_page));
+
+      return {
+        table,
+        meta: {
+          total,
+          per_page: Number(per_page),
+          page: Number(page),
+          last_page,
+          first_page: 1,
+        },
+      };
+    }
+
+    // const caseInsensitiveQuery: Record<string, any> = {} as Record<string, any>;
+
+    // for (const key in query) {
+    //   const regexValue = accentInsensitiveRegex(
+    //     String(query[key]).toLowerCase(),
+    //   );
+    //   const value = query[key];
+    //   if (typeof value === "string")
+    //     caseInsensitiveQuery[key] = {
+    //       $regex: `.*${regexValue}.*`,
+    //       $options: "i",
+    //     };
+    //   else caseInsensitiveQuery[key] = value;
+    // }
+
+    const table = await this.tableRepository.findUnique({
+      _id: id,
+      // page: Number(page),
+      // per_page: Number(per_page),
+      // ...caseInsensitiveQuery,
+    });
 
     if (!table) throw new Error("Tabela não encontrada.");
 
-    return table;
+    const { total } = await this.tableRepository.count({
+      _id: id,
+      // ...caseInsensitiveQuery,
+    });
+
+    const last_page = Math.ceil(total / Number(per_page));
+
+    return {
+      table,
+      meta: {
+        total,
+        per_page: Number(per_page),
+        page: Number(page),
+        last_page,
+        first_page: 1,
+      },
+    };
   }
 
   async list(): Promise<Table[]> {
