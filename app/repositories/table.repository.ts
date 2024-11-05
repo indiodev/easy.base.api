@@ -11,10 +11,12 @@ export class TableRepository {
     const table = await Models.Table.findOne(filter).exec();
 
     if (table && table.data_collection && table.schema) {
+
       const CollectionModal = createDynamicModel(
         table.data_collection!,
         table.schema,
       );
+
 
       const relationalColumns = table.columns.filter((column) =>
         ["RELATIONAL", "MULTI_RELATIONAL"].includes(column.type!),
@@ -32,6 +34,7 @@ export class TableRepository {
           relatedTable.data_collection &&
           relatedTable.schema
         ) {
+
           const TemporaryDynamicModel = createDynamicModel(
             relatedTable.data_collection,
             relatedTable.schema,
@@ -47,6 +50,7 @@ export class TableRepository {
       const rows = await CollectionModal.find({})
         .populate(populateFields)
         .exec();
+
 
       table.rows = rows.map((row: any) => ({
         _id: row._id,
@@ -157,6 +161,7 @@ export class TableRepository {
                       ref: item.config.relation.collection,
                     }),
                   },
+
           }))
           .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
       : null;

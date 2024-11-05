@@ -55,8 +55,6 @@ export class ColumnService {
         cause: "COLUMN_ALREADY_EXISTS",
       });
     }
-
-    // Update
     await this.tableRepository.update(payload.tableId, {
       columns: [...oldColumns, column],
     });

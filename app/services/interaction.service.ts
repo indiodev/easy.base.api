@@ -1,3 +1,4 @@
+
 import { InteractionRepository } from "@repositories/interaction.repository";
 
 export class InteractionService {
@@ -20,6 +21,7 @@ export class InteractionService {
       );
     } catch (error) {
       console.error("Error updating interaction:", error);
+
       throw error;
     }
   }
