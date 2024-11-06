@@ -7,7 +7,7 @@ import createDynamicModel, {
 import { Models, TableDocument } from "@config/mongoose/schema";
 
 export class TableRepository {
-  async findUnique(filter: any): Promise<TableDocument | null> {
+  async findUnique(filter: any, sorted?: {slug: string, type: string}): Promise<TableDocument | null> {
     const table = await Models.Table.findOne(filter).exec();
 
     if (table && table.data_collection && table.schema) {
@@ -50,6 +50,22 @@ export class TableRepository {
       const rows = await CollectionModal.find({})
         .populate(populateFields)
         .exec();
+
+      if (sorted && sorted.slug && sorted.type) {
+        const [orderSlug, orderDirection] = [sorted.slug, sorted.type];
+        const sortOrder = orderDirection === "asc" ? 1 : -1;
+
+        rows.sort((a: any, b: any) => {
+          if (a[orderSlug] < b[orderSlug]) {
+        return -1 * sortOrder;
+          }
+          if (a[orderSlug] > b[orderSlug]) {
+        return 1 * sortOrder;
+          }
+          return 0;
+        });
+      }
+      
 
 
       table.rows = rows.map((row: any) => ({

@@ -13,8 +13,9 @@ export class TableService {
     id,
     page,
     per_page,
+    order,
     ...query
-  }: Partial<Record<string, string | number>>): Promise<{
+  }: Partial<Record<string, string | number> | any>): Promise<{
     table: Table;
     meta: Record<string, number | string>;
   }> {
@@ -23,6 +24,7 @@ export class TableService {
     if (!hasQuery) {
       const table = await this.tableRepository.findUnique({
         _id: id,
+        order,
         // page: Number(page),
         // per_page: Number(per_page),
       });
