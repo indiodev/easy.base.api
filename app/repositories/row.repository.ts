@@ -155,8 +155,8 @@ export class RowRepository {
       throw new Error("Table not found");
     }
 
-    const relationalColumns = table.columns.filter(
-      (column) => column.type === "RELATIONAL",
+    const relationalColumns = table.columns.filter((column) =>
+      ["RELATIONAL", "MULTI_RELATIONAL"].includes(column.type!),
     );
 
     const populateFields = relationalColumns
