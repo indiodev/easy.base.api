@@ -8,16 +8,16 @@ import { settingsRoutes } from "../app/routes/settings.route";
 import { tableRoutes } from "../app/routes/table.route";
 import { userRoutes } from "../app/routes/user.route";
 
-import { app } from "./kernel";
+import { kernel } from "./kernel";
 
-app.use(defaultRoutes);
-app.use(settingsRoutes);
-app.use(tableRoutes);
-app.use(authRoutes);
-app.use(formRoutes);
-app.use(userRoutes);
-app.use(rowRoutes);
-app.use(rolesRoutes);
-app.use(columnRoutes);
+kernel.use(defaultRoutes);
+kernel.use(settingsRoutes);
+kernel.use(tableRoutes);
+kernel.use(authRoutes);
+kernel.use(formRoutes);
+kernel.use(userRoutes);
+kernel.use(rowRoutes);
+kernel.use(rolesRoutes);
+kernel.use(columnRoutes);
 
-export { app as router };
+export { kernel as app };

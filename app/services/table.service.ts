@@ -24,7 +24,7 @@ export class TableService {
     if (!hasQuery) {
       const table = await this.tableRepository.findUnique({
         _id: id,
-        order,
+        // order,
         // page: Number(page),
         // per_page: Number(per_page),
       });

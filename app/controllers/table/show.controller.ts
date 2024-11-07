@@ -18,7 +18,7 @@ export async function Show(
     Object.keys(query).forEach((key) => {
       if (key.startsWith("order-")) {
         const slug = key.replace("order-", "");
-        order = { slug, type: query[key]} as any;
+        order = { slug, type: query[key] } as any;
         delete query[key];
       }
     });
@@ -30,7 +30,7 @@ export async function Show(
       id: request.params.id,
       per_page,
       page,
-      order,
+      // order,
       ...query,
     });
 
