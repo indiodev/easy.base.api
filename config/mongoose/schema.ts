@@ -155,7 +155,6 @@ const TableSchema = new Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
-
 // Models
 const Role = mongoose.model<RoleDocument>("Role", RoleSchema, "Role");
 const Setting = mongoose.model("Setting", SettingSchema, "Setting");

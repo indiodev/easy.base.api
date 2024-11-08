@@ -24,7 +24,7 @@ export class TableService {
     if (!hasQuery) {
       const table = await this.tableRepository.findUnique({
         _id: id,
-        order,
+        // order,
         // page: Number(page),
         // per_page: Number(per_page),
       });
@@ -111,7 +111,7 @@ export class TableService {
         identifier: payload.title,
         title: payload.title,
         columns: {
-          create: payload.columns?.map((column: any) => {
+          create: payload?.columns?.map((column: any) => {
             return {
               title: column.title,
               type: column.type,
@@ -120,6 +120,7 @@ export class TableService {
             };
           }),
         },
+        config: payload.config || null,
       },
     });
 

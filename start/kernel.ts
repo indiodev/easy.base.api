@@ -4,11 +4,11 @@ import express from "express";
 import { Env } from "@config/env";
 import connectDatabase from "@config/mongoose/connect";
 
-const app = express();
+const kernel = express();
 
 connectDatabase();
 
-app.use(
+kernel.use(
   cors({
     origin:
       Env.NODE_ENV === "development"
@@ -19,8 +19,8 @@ app.use(
   }),
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("files"));
+kernel.use(express.json());
+kernel.use(express.urlencoded({ extended: true }));
+kernel.use(express.static("files"));
 
-export { app };
+export { kernel };

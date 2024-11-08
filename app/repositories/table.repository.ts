@@ -7,16 +7,17 @@ import createDynamicModel, {
 import { Models, TableDocument } from "@config/mongoose/schema";
 
 export class TableRepository {
-  async findUnique(filter: any, sorted?: {slug: string, type: string}): Promise<TableDocument | null> {
+  async findUnique(
+    filter: any,
+    sorted?: { slug: string; type: string },
+  ): Promise<TableDocument | null> {
     const table = await Models.Table.findOne(filter).exec();
 
     if (table && table.data_collection && table.schema) {
-
       const CollectionModal = createDynamicModel(
         table.data_collection!,
         table.schema,
       );
-
 
       const relationalColumns = table.columns.filter((column) =>
         ["RELATIONAL", "MULTI_RELATIONAL"].includes(column.type!),
@@ -34,7 +35,6 @@ export class TableRepository {
           relatedTable.data_collection &&
           relatedTable.schema
         ) {
-
           const TemporaryDynamicModel = createDynamicModel(
             relatedTable.data_collection,
             relatedTable.schema,
@@ -57,16 +57,14 @@ export class TableRepository {
 
         rows.sort((a: any, b: any) => {
           if (a[orderSlug] < b[orderSlug]) {
-        return -1 * sortOrder;
+            return -1 * sortOrder;
           }
           if (a[orderSlug] > b[orderSlug]) {
-        return 1 * sortOrder;
+            return 1 * sortOrder;
           }
           return 0;
         });
       }
-      
-
 
       table.rows = rows.map((row: any) => ({
         _id: row._id,
@@ -177,7 +175,6 @@ export class TableRepository {
                       ref: item.config.relation.collection,
                     }),
                   },
-
           }))
           .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
       : null;
