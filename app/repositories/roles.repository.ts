@@ -1,15 +1,47 @@
-import mongoose, { Model } from "mongoose";
+import { FilterQuery, UpdateQuery } from "mongoose";
 
-import { Env } from "@config/env";
-import { RoleDocument } from "@config/mongoose/schema"; // Importando o modelo Role
+import { Models, RoleDocument } from "@config/mongoose/schema"; 
 
 export class RoleRepository {
-  constructor(private roleModel: Model<RoleDocument>) {
-    mongoose.connect(Env.DATABASE_URL).then(() => console.info("Connected!"));
+
+  async findUnique(
+    filter: FilterQuery<RoleDocument>,
+  ): Promise<RoleDocument | null> {
+    return await Models.Role.findOne(filter).exec();
   }
 
-  // Método para buscar múltiplos roles
-  async findMany(): Promise<RoleDocument[]> {
-    return await this.roleModel.find().exec(); // `find` retorna todos os registros
+  
+  async findFirst(
+    filter: FilterQuery<RoleDocument>,
+  ): Promise<RoleDocument | null> {
+    return await Models.Role.findOne(filter).exec();
+  }
+
+
+  async create(roleData: Partial<RoleDocument>): Promise<RoleDocument> {
+    const newRole = new Models.Role(roleData);
+    return await newRole.save();
+  }
+
+
+  async findMany(
+    filter: FilterQuery<RoleDocument> = {},
+  ): Promise<RoleDocument[]> {
+    return await Models.Role.find(filter).exec();
+  }
+
+
+  async update(
+    id: string,
+    updateData: UpdateQuery<RoleDocument>,
+  ): Promise<RoleDocument | null> {
+    return await Models.Role.findByIdAndUpdate(id, updateData, {
+      new: true,
+    }).exec();
+  }
+
+
+  async delete(id: string): Promise<RoleDocument | null> {
+    return await Models.Role.findByIdAndDelete(id).exec();
   }
 }
