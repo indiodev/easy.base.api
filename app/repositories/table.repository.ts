@@ -105,12 +105,12 @@ export class TableRepository {
   }
 
   // Criar um novo documento na coleção Table
-  async create(args: any): Promise<TableDocument | null> {
-    const { columns, ...rest } = args.data;
+  async create(payload: any): Promise<TableDocument | null> {
+    const { columns, ...rest } = payload;
 
     const collectionName = await generateCollectionName(rest.identifier);
 
-    const schemaDefinition = columns.create
+    const schemaDefinition = columns?.create
       ? columns.create
           .map((item: any) => ({
             [item.slug]:
