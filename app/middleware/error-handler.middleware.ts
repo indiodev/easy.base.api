@@ -23,6 +23,8 @@ export function ErrorHandlerMiddleware(
     });
   }
 
+  console.error(error);
+
   return response.status(500).json({
     status: "error",
     message: `Internal server error - ${error.message}`,

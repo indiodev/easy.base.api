@@ -141,6 +141,8 @@ const FormSubmissionsSchema = new Schema({
 const TableSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   title: { type: String, required: true },
+  description: { type: String },
+  logo: { type: String },
   identifier: { type: String, required: true },
   rows: [RowSchema],
   columns: [ColumnSchema],
@@ -224,6 +226,8 @@ export interface UserDocument extends Document {
 export interface TableDocument extends Document {
   _id: Schema.Types.ObjectId;
   title: string;
+  description?: string;
+  logo?: string;
   identifier: string;
   rows: any[] | RowDocument[];
   columns: ColumnDocument[];

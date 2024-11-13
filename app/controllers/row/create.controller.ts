@@ -13,6 +13,5 @@ export async function Create(
     ...request.body,
   });
 
-  
   return response.status(200).json(result);
 }
