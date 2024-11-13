@@ -4,5 +4,6 @@ import { AuthService } from "@services/auth.service";
 
 export function AuthFactory(): AuthService {
   const userRepository = new UserRepository();
-  return new AuthService(userRepository, new HashProvider());
+  const hashProvider = new HashProvider();
+  return new AuthService(userRepository, hashProvider);
 }

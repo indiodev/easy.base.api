@@ -1,7 +1,6 @@
 import { TableDocument as Table } from "@config/mongoose/schema";
 import { RowRepository } from "@repositories/row.repository";
 import { TableRepository } from "@repositories/table.repository";
-import { slugify } from "@util/validators";
 
 export class TableService {
   constructor(
@@ -24,7 +23,7 @@ export class TableService {
     if (!hasQuery) {
       const table = await this.tableRepository.findUnique({
         _id: id,
-        order,
+        // order,
         // page: Number(page),
         // per_page: Number(per_page),
       });
@@ -107,20 +106,11 @@ export class TableService {
 
   async create(payload: any): Promise<Table> {
     const createdTable = await this.tableRepository.create({
-      data: {
-        identifier: payload.title,
-        title: payload.title,
-        columns: {
-          create: payload.columns?.map((column: any) => {
-            return {
-              title: column.title,
-              type: column.type,
-              slug: slugify(column.title),
-              config: column.config || null,
-            };
-          }),
-        },
-      },
+      identifier: payload.title,
+      config: payload.config || null,
+      description: payload.description || null,
+      logo: payload.logo || null,
+      title: payload.title,
     });
 
     if (!createdTable) throw new Error("Failed to create table.");
@@ -129,25 +119,12 @@ export class TableService {
   }
 
   async update(payload: any): Promise<Table | null> {
-    const payloudWithoutColumns = payload;
-    const payloadColumns = payload.columns;
-    delete payloudWithoutColumns.columns;
-    delete payloudWithoutColumns.id;
-    delete payloudWithoutColumns.rows;
-
-    return await this.tableRepository.update(payload._id, {
-      ...payloudWithoutColumns,
-      columns: {
-        set: payloadColumns?.map((column: any) => {
-          return {
-            id: column.id,
-            title: column.title,
-            type: column.type,
-            slug: slugify(column.title),
-            config: column.config || null,
-          };
-        }),
-      },
+    return await this.tableRepository.update(payload.id, {
+      identifier: payload.title,
+      config: payload.config || null,
+      description: payload.description || null,
+      logo: payload.logo || null,
+      title: payload.title,
     });
   }
 

@@ -141,6 +141,8 @@ const FormSubmissionsSchema = new Schema({
 const TableSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   title: { type: String, required: true },
+  description: { type: String },
+  logo: { type: String },
   identifier: { type: String, required: true },
   rows: [RowSchema],
   columns: [ColumnSchema],
@@ -154,7 +156,6 @@ const TableSchema = new Schema({
   deleted_at: { type: Date },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
-
 
 // Models
 const Role = mongoose.model<RoleDocument>("Role", RoleSchema, "Role");
@@ -225,6 +226,8 @@ export interface UserDocument extends Document {
 export interface TableDocument extends Document {
   _id: Schema.Types.ObjectId;
   title: string;
+  description?: string;
+  logo?: string;
   identifier: string;
   rows: any[] | RowDocument[];
   columns: ColumnDocument[];

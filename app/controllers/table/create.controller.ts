@@ -10,5 +10,6 @@ export async function Create(
   const result = await factory.create({
     ...request.body,
   });
+
   return response.status(200).json(result);
 }

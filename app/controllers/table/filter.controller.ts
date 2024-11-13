@@ -6,7 +6,6 @@ export async function Filter(
   request: Request,
   response: Response,
 ): Promise<Response> {
-  
   const factory = TableFactory();
   const result = await factory.filter({
     id: request.params.id,

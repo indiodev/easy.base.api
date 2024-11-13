@@ -14,11 +14,12 @@ export class AuthService {
   ) {}
 
   async login(payload: AuthLogin): Promise<{ token: string }> {
+    console.log(payload);
     const user = await Models.User.findOne({
       email: payload.email,
     });
 
-    const hash = new HashProvider();
+    // const hash = new HashProvider();
 
     if (!user)
       throw new ApplicationException({
@@ -27,7 +28,7 @@ export class AuthService {
         cause: "USER_NOT_FOUND",
       });
 
-    const passwordMatched = await hash.compare(
+    const passwordMatched = await this.hashProvider.compare(
       payload.password,
       user?.password,
     );
@@ -50,9 +51,9 @@ export class AuthService {
   }
 
   async register({ password, ...payload }: AuthRegister): Promise<User> {
-    const hash = new HashProvider();
+    // const hash = new HashProvider();
 
-    const passwordHashed = await hash.generate(password);
+    const passwordHashed = await this.hashProvider.generate(password);
 
     const user = await Models.User.create({
       ...payload,

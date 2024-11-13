@@ -1,9 +1,7 @@
-
 import { Document, Model } from "mongoose";
 
 import createDynamicModel from "@config/mongoose/functions";
 import { Models, TableDocument } from "@config/mongoose/schema"; // Importar o modelo e documento User
-
 
 interface Interaction {
   userId: string;
@@ -12,7 +10,6 @@ interface Interaction {
 }
 
 export class InteractionRepository {
-
   async update(
     tableId: string,
     columnId: String,
@@ -20,7 +17,6 @@ export class InteractionRepository {
     value: any,
     userId: string,
   ): Promise<any | null> {
-
     const table = await Models.Table.findById(tableId).exec();
     if (!table) {
       throw new Error("Table not found");
@@ -28,11 +24,9 @@ export class InteractionRepository {
 
     const Model = await this.getCollectionModel(table);
 
-
     if (!Model) {
       throw new Error(`Model for table ${tableId} not found`);
     }
-
 
     const row = (await Model.findById(rowId).exec()) as any;
 
@@ -43,7 +37,6 @@ export class InteractionRepository {
     const column = table.columns.find(
       (column) => column._id.toString() === columnId,
     );
-
 
     if (!column || !column.slug) {
       throw new Error("Column not found");
@@ -58,7 +51,6 @@ export class InteractionRepository {
     const userInteraction = (row[columnName] as any)?.find(
       (field: any) => field.userId === userId,
     );
-
 
     const newInteraction: Interaction = {
       userId,
@@ -81,7 +73,6 @@ export class InteractionRepository {
       row[columnName][interactionIndex].timestamp = new Date();
       await row.save();
     }
-
   }
 
   private getCollectionModel(table: TableDocument): Model<Document> {
@@ -96,6 +87,5 @@ export class InteractionRepository {
     }
 
     return createDynamicModel(collectionName, schema) as Model<Document>;
-
   }
 }
