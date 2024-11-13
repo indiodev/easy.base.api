@@ -117,7 +117,7 @@ export class TableService {
 
     return createdTable;
   }
-
+  //
   async update(payload: any): Promise<Table | null> {
     return await this.tableRepository.update(payload.id, {
       identifier: payload.title,
