@@ -1,7 +1,8 @@
 import mongoose, { Model, Types } from "mongoose";
 
 import createDynamicModel from "@config/mongoose/functions";
-import { Models, TableDocument } from "@config/mongoose/schema";
+import { ColumnDocument, Models, TableDocument } from "@config/mongoose/schema";
+import { faker } from '@faker-js/faker';
 
 export interface IRowRepository {
   data?: {
@@ -127,6 +128,61 @@ export class RowRepository {
     }).exec();
   }
 
+  
+  async createMany(args: { tableId: string; rows: number }): Promise<any[]> {
+    const table = await Models.Table.findById(args.tableId).exec();
+    if (!table) {
+      throw new Error("Table not found");
+    }
+
+    const columns = table.columns;
+
+
+    const generatedRows = [];
+
+    for (let i = 0; i < args.rows; i++) {
+      const row: any = {};
+
+      for await (const column of columns) {
+        
+        if (column.type === "SHORT_TEXT") {
+          if (column.slug) {
+            row[column.slug] = faker.commerce.productName();
+          }
+        } else if (["MULTI_RELATIONAL", "RELATIONAL"].includes(column.type!)) {
+         
+          const relatedTable = await Models.Table.findOne({
+            data_collection: column.config?.relation?.collection,
+          }).exec();
+
+          if (!relatedTable) {
+            throw new Error("Related table not found");
+          }
+
+          const RelatedCollectionModel = this.getCollectionModel(relatedTable);
+
+          const relatedRows = await RelatedCollectionModel.find().exec();
+
+          if (relatedRows.length > 0) {
+            const randomIndex = Math.floor(Math.random() * relatedRows.length);
+            const relatedRow = relatedRows[randomIndex] as any;
+            row[column.slug!] = relatedRow._id.toString();
+          }
+          
+
+        }
+      };
+
+      generatedRows.push(row);
+    }
+
+
+    const CollectionModel = this.getCollectionModel(table);
+
+    return await CollectionModel.insertMany(generatedRows);
+
+  }
+
   async delete(args: IRowRepository): Promise<any | null> {
     const table = await Models.Table.findById(args.tableId).exec();
     if (!table) {
@@ -197,4 +253,6 @@ export class RowRepository {
       schema,
     ) as Model<mongoose.Document>;
   }
+
+
 }

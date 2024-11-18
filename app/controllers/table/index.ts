@@ -4,6 +4,7 @@ import { Filter } from "./filter.controller";
 import { List } from "./list.controller";
 import { Show } from "./show.controller";
 import { Update } from "./update.controller";
+import { Seed } from "./seed.controller";
 
 export const TableController = {
   Show,
@@ -12,4 +13,5 @@ export const TableController = {
   Update,
   Delete,
   Filter,
+  Seed,
 };

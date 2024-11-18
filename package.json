@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "^9.2.0",
     "@types/body-parser-xml": "^2.0.2",
     "@types/cors": "^2.8.13",
     "@types/jsdom": "^21.1.1",
@@ -44,6 +45,7 @@
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",
     "express-jwt": "^8.4.1",
+    "faker": "^6.6.6",
     "fast-xml-parser": "^4.4.1",
     "html-entities": "^2.3.3",
     "jsdom": "^21.1.1",
