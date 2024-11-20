@@ -24,10 +24,11 @@ export class RowService {
 
   async create({ tableId, ...payload }: any): Promise<RowDocument> {
     return await this.rowRepository.create({
-      data: {
-        value: { ...payload },
-      },
+      // data: {
+      //   value: {  },
+      // },
       tableId,
+      ...payload,
     });
   }
 
@@ -40,11 +41,9 @@ export class RowService {
 
   async update({ tableId, id, ...payload }: any): Promise<RowDocument> {
     return await this.rowRepository.update({
-      data: {
-        value: { ...payload },
-      },
       tableId,
-      id: id,
+      id,
+      ...payload,
     });
   }
 }

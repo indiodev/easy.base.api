@@ -1,8 +1,8 @@
+import { faker } from "@faker-js/faker";
 import mongoose, { Model, Types } from "mongoose";
 
 import createDynamicModel from "@config/mongoose/functions";
-import { ColumnDocument, Models, TableDocument } from "@config/mongoose/schema";
-import { faker } from '@faker-js/faker';
+import { Models, TableDocument } from "@config/mongoose/schema";
 
 export interface IRowRepository {
   data?: {
@@ -76,59 +76,64 @@ export class RowRepository {
     return returnRow;
   }
 
-  async create(args: IRowRepository): Promise<any | null> {
-    const rowWithoutTableId = {
-      ...args.data!.value,
+  async create({ tableId, ...payload }: any): Promise<any | null> {
+    const data = {
       _id: new Types.ObjectId(),
+      ...payload,
     };
 
-    delete rowWithoutTableId.tableId;
+    // delete rowWithoutTableId.tableId;
 
-    const table = await Models.Table.findById(args.tableId).exec();
+    const table = await Models.Table.findById(tableId).exec();
+
     if (!table) {
       throw new Error("Table not found");
     }
 
     const columns = table.columns;
 
-    for (const key in rowWithoutTableId) {
+    for (const key in data) {
       const column = columns.find((col) => col.slug === key);
 
       if (column && column.type === "MULTI_RELATIONAL") {
-        rowWithoutTableId[key] = rowWithoutTableId[key].split(",");
+        data[key] = data[key].split(",");
       }
     }
 
     const CollectionModel = this.getCollectionModel(table);
 
-    return await CollectionModel.create(rowWithoutTableId);
+    console.log(data);
+    return await CollectionModel.create(data);
   }
 
-  async update(args: IRowRepository): Promise<any | null> {
-    const rowWithoutTableId = { ...args.data?.value };
+  async update({ tableId, id, ...payload }: any): Promise<any | null> {
+    const data = { ...payload };
 
-    const table = await Models.Table.findById(args.tableId).exec();
+    const table = await Models.Table.findById(tableId).exec();
     if (!table) {
       throw new Error("Table not found");
     }
 
     const columns = table.columns;
 
-    for (const key in rowWithoutTableId) {
+    for (const key in payload) {
       const column = columns.find((col) => col.slug === key);
       if (column && column.type === "MULTI_RELATIONAL") {
-        rowWithoutTableId[key] = rowWithoutTableId[key].split(",");
+        data[key] = data[key].split(",");
       }
     }
 
     const CollectionModel = this.getCollectionModel(table);
+    console.log({
+      data,
+      id,
+    });
 
-    return await CollectionModel.findByIdAndUpdate(args.id, rowWithoutTableId, {
+    return await CollectionModel.findByIdAndUpdate(id, data, {
       new: true,
     }).exec();
   }
 
-  
   async createMany(args: { tableId: string; rows: number }): Promise<any[]> {
     const table = await Models.Table.findById(args.tableId).exec();
     if (!table) {
@@ -137,20 +142,17 @@ export class RowRepository {
 
     const columns = table.columns;
 
-
     const generatedRows = [];
 
     for (let i = 0; i < args.rows; i++) {
       const row: any = {};
 
       for await (const column of columns) {
-        
         if (column.type === "SHORT_TEXT") {
           if (column.slug) {
             row[column.slug] = faker.commerce.productName();
           }
         } else if (["MULTI_RELATIONAL", "RELATIONAL"].includes(column.type!)) {
-         
           const relatedTable = await Models.Table.findOne({
             data_collection: column.config?.relation?.collection,
           }).exec();
@@ -168,19 +170,15 @@ export class RowRepository {
             const relatedRow = relatedRows[randomIndex] as any;
             row[column.slug!] = relatedRow._id.toString();
           }
-          
-
         }
-      };
+      }
 
       generatedRows.push(row);
     }
 
-
     const CollectionModel = this.getCollectionModel(table);
 
     return await CollectionModel.insertMany(generatedRows);
-
   }
 
   async delete(args: IRowRepository): Promise<any | null> {
@@ -253,6 +251,4 @@ export class RowRepository {
       schema,
     ) as Model<mongoose.Document>;
   }
-
-
 }

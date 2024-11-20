@@ -137,6 +137,6 @@ export class TableService {
   }
 
   async seed(tableId: string, rows: number): Promise<void> {
-    await this.rowRepository.createMany({tableId, rows});
+    await this.rowRepository.createMany({ tableId, rows });
   }
 }
