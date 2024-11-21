@@ -82,22 +82,10 @@ export class RowRepository {
       ...payload,
     };
 
-    // delete rowWithoutTableId.tableId;
-
     const table = await Models.Table.findById(tableId).exec();
 
     if (!table) {
       throw new Error("Table not found");
-    }
-
-    const columns = table.columns;
-
-    for (const key in data) {
-      const column = columns.find((col) => col.slug === key);
-
-      if (column && column.type === "MULTI_RELATIONAL") {
-        data[key] = data[key].split(",");
-      }
     }
 
     const CollectionModel = this.getCollectionModel(table);
@@ -112,15 +100,6 @@ export class RowRepository {
     const table = await Models.Table.findById(tableId).exec();
     if (!table) {
       throw new Error("Table not found");
-    }
-
-    const columns = table.columns;
-
-    for (const key in payload) {
-      const column = columns.find((col) => col.slug === key);
-      if (column && column.type === "MULTI_RELATIONAL") {
-        data[key] = data[key].split(",");
-      }
     }
 
     const CollectionModel = this.getCollectionModel(table);
