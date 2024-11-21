@@ -19,13 +19,14 @@ export class TableService {
     meta: Record<string, number | string>;
   }> {
     const hasQuery = Object.keys(query).length > 0;
+    console.log({ hasQuery });
 
     if (!hasQuery) {
       const table = await this.tableRepository.findUnique({
         _id: id,
         // order,
-        // page: Number(page),
-        // per_page: Number(per_page),
+        page: Number(page),
+        per_page: Number(per_page),
       });
 
       if (!table) throw new Error("Tabela não encontrada.");
@@ -65,8 +66,8 @@ export class TableService {
 
     const table = await this.tableRepository.findUnique({
       _id: id,
-      // page: Number(page),
-      // per_page: Number(per_page),
+      page: Number(page),
+      per_page: Number(per_page),
       // ...caseInsensitiveQuery,
     });
 
