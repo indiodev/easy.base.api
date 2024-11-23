@@ -90,7 +90,6 @@ export class RowRepository {
 
     const CollectionModel = this.getCollectionModel(table);
 
-    console.log(data);
     return await CollectionModel.create(data);
   }
 
@@ -103,10 +102,6 @@ export class RowRepository {
     }
 
     const CollectionModel = this.getCollectionModel(table);
-    console.log({
-      data,
-      id,
-    });
 
     return await CollectionModel.findByIdAndUpdate(id, data, {
       new: true,

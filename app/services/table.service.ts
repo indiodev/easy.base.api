@@ -19,7 +19,6 @@ export class TableService {
     meta: Record<string, number | string>;
   }> {
     const hasQuery = Object.keys(query).length > 0;
-    console.log({ hasQuery });
 
     if (!hasQuery) {
       const table = await this.tableRepository.findUnique({
@@ -27,6 +26,7 @@ export class TableService {
         // order,
         page: Number(page),
         per_page: Number(per_page),
+        ...query,
       });
 
       if (!table) throw new Error("Tabela não encontrada.");
@@ -49,26 +49,11 @@ export class TableService {
       };
     }
 
-    // const caseInsensitiveQuery: Record<string, any> = {} as Record<string, any>;
-
-    // for (const key in query) {
-    //   const regexValue = accentInsensitiveRegex(
-    //     String(query[key]).toLowerCase(),
-    //   );
-    //   const value = query[key];
-    //   if (typeof value === "string")
-    //     caseInsensitiveQuery[key] = {
-    //       $regex: `.*${regexValue}.*`,
-    //       $options: "i",
-    //     };
-    //   else caseInsensitiveQuery[key] = value;
-    // }
-
     const table = await this.tableRepository.findUnique({
       _id: id,
       page: Number(page),
       per_page: Number(per_page),
-      // ...caseInsensitiveQuery,
+      ...query,
     });
 
     if (!table) throw new Error("Tabela não encontrada.");

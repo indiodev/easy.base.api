@@ -5,13 +5,17 @@ import createDynamicModel, {
   getColumnDataType,
 } from "@config/mongoose/functions";
 import { Models, TableDocument } from "@config/mongoose/schema";
+import { extractOrder, extractQuery } from "@util/table";
 
 export class TableRepository {
   async findUnique(
-    { page, per_page, ...query }: any,
+    { _id, page, per_page, ...query }: any,
     // sorted?: { slug: string; type: string },
   ): Promise<TableDocument | null> {
-    const table = await Models.Table.findOne(query).exec();
+    const _query = extractQuery(query);
+    const _order = extractOrder(query);
+
+    const table = await Models.Table.findOne({ _id }).exec();
 
     if (table && table.data_collection && table.schema) {
       const CollectionModal = createDynamicModel(
@@ -49,26 +53,12 @@ export class TableRepository {
 
       const skip = (page - 1) * per_page;
 
-      const rows = await CollectionModal.find({})
+      const rows = await CollectionModal.find(_query)
+        .sort(_order)
         .populate(populateFields)
         .skip(skip)
         .limit(per_page)
         .exec();
-
-      // if (sorted && sorted.slug && sorted.type) {
-      //   const [orderSlug, orderDirection] = [sorted.slug, sorted.type];
-      //   const sortOrder = orderDirection === "asc" ? 1 : -1;
-
-      //   rows.sort((a: any, b: any) => {
-      //     if (a[orderSlug] < b[orderSlug]) {
-      //       return -1 * sortOrder;
-      //     }
-      //     if (a[orderSlug] > b[orderSlug]) {
-      //       return 1 * sortOrder;
-      //     }
-      //     return 0;
-      //   });
-      // }
 
       table.rows = rows.map((row: any) => ({
         _id: row._id,

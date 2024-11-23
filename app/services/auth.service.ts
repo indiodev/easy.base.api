@@ -14,7 +14,6 @@ export class AuthService {
   ) {}
 
   async login(payload: AuthLogin): Promise<{ token: string }> {
-    console.log(payload);
     const user = await Models.User.findOne({
       email: payload.email,
     });

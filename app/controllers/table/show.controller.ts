@@ -30,8 +30,8 @@ export async function Show(
       id: request.params.id,
       per_page,
       page,
+      ...query,
       // order,
-      // ...query,
     });
 
     return response.status(200).json({ data: table, meta });
