@@ -15,7 +15,7 @@ kernel.use(
         ? "http://localhost:5173"
         : [
             "https://gbd-client-five.vercel.app",
-            "https://easy-base-front.vercel.app/",
+            "https://easy-base-front.vercel.app",
           ],
     methods: "*",
     credentials: true,
