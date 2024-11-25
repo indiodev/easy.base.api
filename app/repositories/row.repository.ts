@@ -58,6 +58,8 @@ export class RowRepository {
 
     const skip = (page - 1) * per_page;
 
+    console.log(populateFields);
+
     const rows = await CollectionModal.find<RowDocument>(_query)
       .sort(_order)
       .populate(populateFields)
@@ -150,10 +152,7 @@ export class RowRepository {
   }
 
   async create({ tableId, ...payload }: any): Promise<any | null> {
-    const data = {
-      _id: new Types.ObjectId(),
-      ...payload,
-    };
+    console.log({ tableId, ...payload });
 
     const table = await Models.Table.findById(tableId).exec();
 
@@ -163,7 +162,10 @@ export class RowRepository {
 
     const CollectionModel = this.getCollectionModel(table);
 
-    return await CollectionModel.create(data);
+    return await CollectionModel.create({
+      _id: new Types.ObjectId(),
+      ...payload,
+    });
   }
 
   async update({ tableId, id, ...payload }: any): Promise<any | null> {
