@@ -8,10 +8,12 @@ import { Models, TableDocument } from "@config/mongoose/schema";
 import { extractOrder, extractQuery } from "@util/table";
 
 export class TableRepository {
-  async findUnique(
-    { _id, page, per_page, ...query }: any,
-    // sorted?: { slug: string; type: string },
-  ): Promise<TableDocument | null> {
+  async findUnique({
+    _id,
+    page,
+    per_page,
+    ...query
+  }: any): Promise<TableDocument | null> {
     const _query = extractQuery(query);
     const _order = extractOrder(query);
 

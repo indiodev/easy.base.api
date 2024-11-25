@@ -7,6 +7,23 @@ import { storage } from "@util/multer";
 import { router } from "./router";
 
 const upload = multer({ storage });
+router.get(
+  "/tables/:tableId/row/paginate",
+  Middleware.Authentication,
+  RowController.Paginate,
+);
+
+router.get(
+  "/tables/:tableId/row/:id",
+  Middleware.Authentication,
+  RowController.Show,
+);
+
+router.get(
+  "/tables/:data_collection/column/:columnId/row",
+  Middleware.Authentication,
+  RowController.findManyByCollection,
+);
 
 router.post(
   "/tables/:id/row",
@@ -20,18 +37,6 @@ router.patch(
   upload.any(),
   Middleware.Authentication,
   RowController.Update,
-);
-
-router.get(
-  "/tables/:tableId/row/:id",
-  Middleware.Authentication,
-  RowController.Show,
-);
-
-router.get(
-  "/tables/:data_collection/column/:columnId/row",
-  Middleware.Authentication,
-  RowController.findManyByCollection,
 );
 
 router.delete(

@@ -2,6 +2,7 @@ import { Create } from "./create.controller";
 import { Delete } from "./delete.controller";
 import { findManyByCollection } from "./find-many-by-collection.controller";
 import { Interaction } from "./interaction.controller";
+import { Paginate } from "./paginate.controller";
 import { Show } from "./show.controller";
 import { Update } from "./update.controller";
 
@@ -12,4 +13,5 @@ export const RowController = {
   Show,
   findManyByCollection,
   Interaction,
+  Paginate,
 };

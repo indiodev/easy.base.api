@@ -14,15 +14,6 @@ export async function Show(
     const page = Number(request.query.page ?? 1);
     const per_page = Number(request.query.per_page ?? 10);
 
-    // let order: { slug?: string; type?: string } = {};
-    // Object.keys(query).forEach((key) => {
-    //   if (key.startsWith("order-")) {
-    //     const slug = key.replace("order-", "");
-    //     order = { slug, type: query[key] } as any;
-    //     delete query[key];
-    //   }
-    // });
-
     delete query.per_page;
     delete query.page;
 
@@ -31,7 +22,6 @@ export async function Show(
       per_page,
       page,
       ...query,
-      // order,
     });
 
     return response.status(200).json({ data: table, meta });

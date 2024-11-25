@@ -2,7 +2,8 @@ import { faker } from "@faker-js/faker";
 import mongoose, { Model, Types } from "mongoose";
 
 import createDynamicModel from "@config/mongoose/functions";
-import { Models, TableDocument } from "@config/mongoose/schema";
+import { Models, RowDocument, TableDocument } from "@config/mongoose/schema";
+import { extractOrder, extractQuery } from "@util/table";
 
 export interface IRowRepository {
   data?: {
@@ -13,6 +14,78 @@ export interface IRowRepository {
 }
 
 export class RowRepository {
+  async paginate({
+    _id,
+    page,
+    per_page,
+    ...query
+  }: any): Promise<RowDocument[]> {
+    const _query = extractQuery(query);
+    const _order = extractOrder(query);
+
+    const table = await Models.Table.findOne({ _id }).exec();
+
+    if (!table || !table.data_collection || !table.schema) return [];
+
+    const CollectionModal = createDynamicModel(
+      table.data_collection!,
+      table.schema,
+    );
+
+    const relationalColumns = table.columns.filter((column) =>
+      ["RELATIONAL", "MULTI_RELATIONAL"].includes(column.type!),
+    );
+
+    let registeredColumns = [];
+
+    for await (const column of relationalColumns) {
+      const relatedTable = await Models.Table.findOne({
+        data_collection: column.config.relation.collection,
+      }).exec();
+
+      if (relatedTable && relatedTable.data_collection && relatedTable.schema) {
+        const TemporaryDynamicModel = createDynamicModel(
+          relatedTable.data_collection,
+          relatedTable.schema,
+        );
+        registeredColumns.push(TemporaryDynamicModel);
+      }
+    }
+
+    const populateFields = relationalColumns
+      .flatMap((column) => column.slug)
+      .join(" ");
+
+    const skip = (page - 1) * per_page;
+
+    const rows = await CollectionModal.find<RowDocument>(_query)
+      .sort(_order)
+      .populate(populateFields)
+      .skip(skip)
+      .limit(per_page)
+      .exec();
+
+    return rows;
+  }
+
+  async count({
+    _id,
+    ...query
+  }: Partial<Record<string, any>>): Promise<{ total: number }> {
+    const table = await Models.Table.findOne({ _id }).exec();
+
+    if (!table || !table.data_collection || !table.schema) return { total: 0 };
+
+    const CollectionModal = createDynamicModel(
+      table.data_collection!,
+      table.schema,
+    );
+
+    const total = await CollectionModal.countDocuments(query).exec();
+
+    return { total };
+  }
+
   async findManyByCollection(query: {
     data_collection: string;
     columnId: string;
