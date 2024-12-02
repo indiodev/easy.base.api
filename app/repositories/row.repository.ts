@@ -60,6 +60,8 @@ export class RowRepository {
 
     console.log(populateFields);
 
+    console.log(_query);
+
     const rows = await CollectionModal.find<RowDocument>(_query)
       .sort(_order)
       .populate(populateFields)
@@ -152,8 +154,6 @@ export class RowRepository {
   }
 
   async create({ tableId, ...payload }: any): Promise<any | null> {
-    console.log({ tableId, ...payload });
-
     const table = await Models.Table.findById(tableId).exec();
 
     if (!table) {

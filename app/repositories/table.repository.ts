@@ -108,24 +108,36 @@ export class TableRepository {
 
     const schemaDefinition = columns?.create
       ? columns.create
-          .map((item: any) => ({
-            [item.slug]:
-              item.type == "MULTI_RELATIONAL"
-                ? [
-                    {
-                      type: getColumnDataType(item.type),
-                      required: item.config?.required || false,
-                      ref: item.config.relation.collection,
-                    },
-                  ]
-                : {
+          .map((item: any) => {
+            if (item.type == "MULTI_RELATIONAL") {
+              return {
+                [item.slug]: [
+                  {
                     type: getColumnDataType(item.type),
                     required: item.config?.required || false,
-                    ...(["RELATIONAL"].includes(item.type) && {
-                      ref: item.config.relation.collection,
-                    }),
+                    ref: item.config.relation.collection,
                   },
-          }))
+                ],
+              };
+            }
+
+            if (item.type == "RELATIONAL") {
+              return {
+                [item.slug]: {
+                  type: getColumnDataType(item.type),
+                  required: item.config?.required || false,
+                  ref: item.config.relation.collection,
+                },
+              };
+            }
+
+            return {
+              [item.slug]: {
+                type: getColumnDataType(item.type),
+                required: item.config?.required || false,
+              },
+            };
+          })
           .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
       : null;
 
@@ -154,24 +166,36 @@ export class TableRepository {
 
     const schemaDefinition = columns
       ? columns
-          .map((item: any) => ({
-            [item.slug]:
-              item.type == "MULTI_RELATIONAL"
-                ? [
-                    {
-                      type: getColumnDataType(item.type),
-                      required: item.config?.required || false,
-                      ref: item.config.relation.collection,
-                    },
-                  ]
-                : {
+          .map((item: any) => {
+            if (item.type == "MULTI_RELATIONAL") {
+              return {
+                [item.slug]: [
+                  {
                     type: getColumnDataType(item.type),
                     required: item.config?.required || false,
-                    ...(["RELATIONAL"].includes(item.type) && {
-                      ref: item.config.relation.collection,
-                    }),
+                    ref: item.config.relation.collection,
                   },
-          }))
+                ],
+              };
+            }
+
+            if (item.type == "RELATIONAL") {
+              return {
+                [item.slug]: {
+                  type: getColumnDataType(item.type),
+                  required: item.config?.required || false,
+                  ref: item.config.relation.collection,
+                },
+              };
+            }
+
+            return {
+              [item.slug]: {
+                type: getColumnDataType(item.type),
+                required: item.config?.required || false,
+              },
+            };
+          })
           .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
       : null;
 
