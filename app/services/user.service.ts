@@ -43,10 +43,11 @@ export class UserService {
     return await this.userRepository.delete(id);
   }
 
-  async tableLayoutView({
+  async updateTable({
     id,
     tableId,
     layout,
+    column_order,
   }: UserTableUpdate): Promise<void> {
     const user = await this.userRepository.findUnique({
       _id: id!,
@@ -56,6 +57,15 @@ export class UserService {
     const table = user?.config?.table ?? {};
     const path = table[tableId!] || {};
 
+    console.log(path);
+
+    const updatedLayout = layout ?? path.layout;
+    const updatedColumnOrder = {
+      ...path.column_order,
+      ...(column_order?.root && { root: column_order.root }),
+      ...(column_order?.form && { form: column_order.form }),
+    };
+
     await this.userRepository.update(id!, {
       config: {
         ...config,
@@ -63,7 +73,8 @@ export class UserService {
           ...table,
           [tableId!]: {
             ...path,
-            layout,
+            layout: updatedLayout,
+            column_order: updatedColumnOrder,
           },
         },
       },

@@ -12,6 +12,12 @@ export const UserTableUpdateValidator = z.object({
   tableId: z.string().trim().optional(),
   id: z.string().trim().optional(),
   layout: z.enum(["grid", "list"]).optional(),
+  column_order: z
+    .object({
+      root: z.array(z.string()).optional(),
+      form: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
 
 export const UserCreateValidator = z.object({
