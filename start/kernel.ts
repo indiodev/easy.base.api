@@ -18,7 +18,7 @@ kernel.use(
             "https://gbd-client-five.vercel.app",
             "https://easy-base-front.vercel.app",
           ],
-    methods: "*",
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"].join(","),
     credentials: true,
   }),
 );
