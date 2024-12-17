@@ -18,8 +18,6 @@ export class AuthService {
       email: payload.email,
     });
 
-    // const hash = new HashProvider();
-
     if (!user)
       throw new ApplicationException({
         code: 401,
@@ -39,10 +37,16 @@ export class AuthService {
         cause: "CREDENTIALS_INVALID",
       });
 
-    const token = sign({}, Authentication.JWT.SECRET, {
-      subject: user.id,
-      expiresIn: Authentication.JWT.EXPIRES_IN,
-    });
+    const token = sign(
+      {
+        role: user.role || "MASTER",
+      },
+      Authentication.JWT.SECRET,
+      {
+        subject: user.id,
+        expiresIn: Authentication.JWT.EXPIRES_IN,
+      },
+    );
 
     user.password = "";
 

@@ -58,9 +58,9 @@ export class RowRepository {
 
     const skip = (page - 1) * per_page;
 
-    console.log(populateFields);
+    console.info(populateFields);
 
-    console.log(_query);
+    console.info(_query);
 
     const rows = await CollectionModal.find<RowDocument>(_query)
       .sort(_order)

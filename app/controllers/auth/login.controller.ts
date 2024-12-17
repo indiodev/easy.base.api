@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+import { Env } from "@config/env";
 import { AuthFactory } from "@factories/auth.factory";
 import { AuthLoginValidator } from "@validators/auth.validator";
 
@@ -10,5 +11,13 @@ export async function Login(
   const factory = AuthFactory();
   const payload = AuthLoginValidator.parse(request.body);
   const result = await factory.login(payload);
-  return response.status(200).json(result);
+
+  return response
+    .cookie("token", result.token, {
+      httpOnly: true,
+      secure: Env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 1000,
+    })
+    .status(200)
+    .json(result);
 }

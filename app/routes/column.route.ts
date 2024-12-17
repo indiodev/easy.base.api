@@ -3,10 +3,16 @@ import { Middleware } from "@middleware/index";
 
 import { router } from "./router";
 
-router.post("/columns", Middleware.Authentication, ColumnController.Create);
+router.post(
+  "/columns",
+  Middleware.Authentication,
+  Middleware.TableCreateRoleMiddleware,
+  ColumnController.Create,
+);
 router.patch(
   "/columns/:id",
   Middleware.Authentication,
+  Middleware.TableUpdateRoleMiddleware,
   ColumnController.Update,
 );
 
@@ -21,7 +27,5 @@ router.get(
   Middleware.Authentication,
   ColumnController.Show,
 );
-
-
 
 export { router as columnRoutes };

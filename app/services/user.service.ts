@@ -57,8 +57,6 @@ export class UserService {
     const table = user?.config?.table ?? {};
     const path = table[tableId!] || {};
 
-    console.log(path);
-
     const updatedLayout = layout ?? path.layout;
     const updatedColumnOrder = {
       ...path.column_order,

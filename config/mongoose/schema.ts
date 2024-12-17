@@ -1,9 +1,17 @@
 /* eslint-disable no-undef */
 import mongoose, { Schema } from "mongoose";
 
+// MASTER=Edita todas as tabelas e as configurações do sistema
+// MANAGER=Apenas alimenta as tabelas (Adiciona, edita) mas não pode criar novas tabelas
+// GERENTE=Apenas alimenta as tabelas (Adiciona, edita) e pode criar novas tabelas
+
 // Enum for UserRole
 const UserRole = {
+  MASTER: "MASTER", //SUPER ADMIN
   ADMIN: "ADMIN",
+  MANAGER: "MANAGER", //GERENTE
+  REGISTERED: "REGISTERED", //REGISTRADO
+
   CREATOR: "CREATOR",
   REVISOR: "REVISOR",
   COLLABORATOR: "COLLABORATOR",

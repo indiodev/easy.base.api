@@ -1,3 +1,4 @@
+import cookie from "cookie-parser";
 import cors from "cors";
 import express from "express";
 
@@ -25,5 +26,6 @@ kernel.use(
 kernel.use(express.json());
 kernel.use(express.urlencoded({ extended: true }));
 kernel.use(express.static("files"));
+kernel.use(cookie());
 
 export { kernel };

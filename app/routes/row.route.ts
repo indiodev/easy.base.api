@@ -29,6 +29,7 @@ router.post(
   "/tables/:id/row",
   upload.any(),
   Middleware.Authentication,
+  Middleware.TableCreateRoleMiddleware,
   RowController.Create,
 );
 
@@ -36,6 +37,7 @@ router.patch(
   "/tables/:tableId/row/:id",
   upload.any(),
   Middleware.Authentication,
+  Middleware.TableUpdateRoleMiddleware,
   RowController.Update,
 );
 

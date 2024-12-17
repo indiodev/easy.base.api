@@ -3,9 +3,11 @@ import { verify } from "jsonwebtoken";
 
 import { ApplicationException } from "@exceptions/application.exception";
 import { Authentication } from "@util/authentication";
+type Role = "MASTER" | "ADMIN" | "MANAGER" | "REGISTERED";
 export interface CustomRequest extends ExpressRequest {
   user?: {
     id: string;
+    role: Role;
   };
 }
 
@@ -14,7 +16,9 @@ export async function AuthenticationMiddleware(
   response: Response,
   next: NextFunction,
 ): Promise<void> {
-  const token = request.headers.authorization?.replace("Bearer", "").trim();
+  const token =
+    request.cookies["token"] ??
+    request.headers.authorization?.replace("Bearer", "").trim();
 
   if (!token)
     throw new ApplicationException({
@@ -24,12 +28,14 @@ export async function AuthenticationMiddleware(
     });
 
   try {
-    const { sub } = verify(token, Authentication.JWT.SECRET) as {
+    const decoded = verify(token, Authentication.JWT.SECRET) as {
       sub: string;
+      role: string;
     };
 
     request.user = {
-      id: sub,
+      id: decoded.sub,
+      role: decoded.role as Role,
     };
 
     next();
