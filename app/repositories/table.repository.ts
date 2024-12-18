@@ -163,47 +163,53 @@ export class TableRepository {
   // Atualizar um documento existente da coleção Table
   async update(id: string, updateData: any): Promise<TableDocument | null> {
     const { columns, ...rest } = updateData;
+    console.log(updateData);
 
-    const schemaDefinition = columns
-      ? columns
-          .map((item: any) => {
-            if (item.type == "MULTI_RELATIONAL") {
-              return {
-                [item.slug]: [
-                  {
-                    type: getColumnDataType(item.type),
-                    required: item.config?.required || false,
-                    ref: item.config.relation.collection,
-                  },
-                ],
-              };
-            }
+    let schema: Record<string, any> | null = null;
 
-            if (item.type == "RELATIONAL") {
-              return {
-                [item.slug]: {
-                  type: getColumnDataType(item.type),
-                  required: item.config?.required || false,
-                  ref: item.config.relation.collection,
-                },
-              };
-            }
-
-            return {
-              [item.slug]: {
+    if (columns && Array.isArray(columns) && columns.length > 0) {
+      const mapping = columns.map((item: any) => {
+        if (item.type == "MULTI_RELATIONAL") {
+          return {
+            [item.slug]: [
+              {
                 type: getColumnDataType(item.type),
                 required: item.config?.required || false,
+                ref: item.config.relation.collection,
               },
-            };
-          })
-          .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
-      : null;
+            ],
+          };
+        }
+
+        if (item.type == "RELATIONAL") {
+          return {
+            [item.slug]: {
+              type: getColumnDataType(item.type),
+              required: item.config?.required || false,
+              ref: item.config.relation.collection,
+            },
+          };
+        }
+
+        return {
+          [item.slug]: {
+            type: getColumnDataType(item.type),
+            required: item.config?.required || false,
+          },
+        };
+      });
+
+      schema = mapping.reduce(
+        (acc: any, curr: any) => ({ ...acc, ...curr }),
+        {},
+      );
+    }
 
     const updatedTable = await Models.Table.findByIdAndUpdate(
       id,
       {
         ...rest,
-        schema: schemaDefinition,
+        schema,
         // Se houver colunas para atualizar
         $set: {
           columns: columns

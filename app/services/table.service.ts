@@ -105,12 +105,9 @@ export class TableService {
   }
   //
   async update(payload: any): Promise<Table | null> {
+    // console
     return await this.tableRepository.update(payload.id, {
-      identifier: payload.title,
-      config: payload.config || null,
-      description: payload.description || null,
-      logo: payload.logo || null,
-      title: payload.title,
+      ...payload,
     });
   }
 
