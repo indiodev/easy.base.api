@@ -106,47 +106,52 @@ export class TableRepository {
 
     const collectionName = await generateCollectionName(rest.identifier);
 
-    const schemaDefinition = columns?.create
-      ? columns.create
-          .map((item: any) => {
-            if (item.type == "MULTI_RELATIONAL") {
-              return {
-                [item.slug]: [
-                  {
-                    type: getColumnDataType(item.type),
-                    required: item.config?.required || false,
-                    ref: item.config.relation.collection,
-                  },
-                ],
-              };
-            }
+    let schema: Record<string, any> | null = null;
 
-            if (item.type == "RELATIONAL") {
-              return {
-                [item.slug]: {
-                  type: getColumnDataType(item.type),
-                  required: item.config?.required || false,
-                  ref: item.config.relation.collection,
-                },
-              };
-            }
-
-            return {
-              [item.slug]: {
+    if (columns && Array.isArray(columns) && columns.length > 0) {
+      const mapping = columns.map((item: any) => {
+        if (["MULTI_RELATIONAL", "FILE"].includes(item.type)) {
+          return {
+            [item.slug]: [
+              {
                 type: getColumnDataType(item.type),
                 required: item.config?.required || false,
+                ref: item?.config?.relation?.collection ?? undefined,
               },
-            };
-          })
-          .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
-      : null;
+            ],
+          };
+        }
+
+        if (item.type == "RELATIONAL") {
+          return {
+            [item.slug]: {
+              type: getColumnDataType(item.type),
+              required: item.config?.required || false,
+              ref: item?.config?.relation?.collection ?? undefined,
+            },
+          };
+        }
+
+        return {
+          [item.slug]: {
+            type: getColumnDataType(item.type),
+            required: item.config?.required || false,
+          },
+        };
+      });
+
+      schema = mapping.reduce(
+        (acc: any, curr: any) => ({ ...acc, ...curr }),
+        {},
+      );
+    }
 
     const newTable = new Models.Table({
       ...rest,
       data_collection: collectionName,
-      schema: schemaDefinition,
+      schema: schema,
       // Relacionamento com as colunas
-      columns: columns?.create?.map((column: any) => ({
+      columns: columns?.map((column: any) => ({
         ...column,
         _id: new Types.ObjectId(), // Gerar um novo ObjectId para as colunas
       })),
@@ -168,13 +173,13 @@ export class TableRepository {
 
     if (columns && Array.isArray(columns) && columns.length > 0) {
       const mapping = columns.map((item: any) => {
-        if (item.type == "MULTI_RELATIONAL") {
+        if (["MULTI_RELATIONAL", "FILE"].includes(item.type)) {
           return {
             [item.slug]: [
               {
                 type: getColumnDataType(item.type),
                 required: item.config?.required || false,
-                ref: item.config.relation.collection,
+                ref: item?.config?.relation?.collection ?? undefined,
               },
             ],
           };
@@ -185,7 +190,7 @@ export class TableRepository {
             [item.slug]: {
               type: getColumnDataType(item.type),
               required: item.config?.required || false,
-              ref: item.config.relation.collection,
+              ref: item?.config?.relation?.collection ?? undefined,
             },
           };
         }

@@ -27,6 +27,8 @@ export const getColumnDataType = (type: string): any => {
       return "ObjectId";
     case "MULTI_RELATIONAL":
       return "ObjectId";
+    case "FILE":
+      return "String";
     default:
       return "String";
   }

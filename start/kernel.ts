@@ -1,6 +1,7 @@
 import cookie from "cookie-parser";
 import cors from "cors";
 import express from "express";
+import { join } from "path";
 
 import { Env } from "@config/env";
 import connectDatabase from "@config/mongoose/connect";
@@ -25,7 +26,7 @@ kernel.use(
 
 kernel.use(express.json());
 kernel.use(express.urlencoded({ extended: true }));
-kernel.use(express.static("files"));
+kernel.use("/files", express.static(join(__dirname, "..", "files")));
 kernel.use(cookie());
 
 export { kernel };
