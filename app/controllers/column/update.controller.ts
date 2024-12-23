@@ -7,16 +7,9 @@ export async function Update(
   response: Response,
 ): Promise<Response> {
   const factory = ColumnFactory();
-
-  try {
-    await factory.update({
-      column: request.body.column,
-      tableId: request.body.tableId,
-    });
-  } catch (error) {
-    console.error(error);
-    return response.status(400).json(error);
-  }
-
-  return response.status(200).send();
+  const result = await factory.update({
+    column: request.body.column,
+    tableId: request.body.tableId,
+  });
+  return response.status(200).json(result);
 }

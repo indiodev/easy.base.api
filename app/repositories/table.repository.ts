@@ -163,7 +163,6 @@ export class TableRepository {
   // Atualizar um documento existente da coleção Table
   async update(id: string, updateData: any): Promise<TableDocument | null> {
     const { columns, ...rest } = updateData;
-    console.log(updateData);
 
     let schema: Record<string, any> | null = null;
 

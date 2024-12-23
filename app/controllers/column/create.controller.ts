@@ -7,9 +7,9 @@ export async function Create(
   response: Response,
 ): Promise<Response> {
   const factory = ColumnFactory();
-  await factory.create({
+  const result = await factory.create({
     column: request.body.column,
     tableId: request.body.tableId,
   });
-  return response.status(200).send();
+  return response.status(200).json(result);
 }

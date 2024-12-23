@@ -15,7 +15,7 @@ export class ColumnService {
   async create(payload: {
     tableId: string;
     column: Partial<Column>;
-  }): Promise<void> {
+  }): Promise<Record<string, unknown>> {
     const table = await this.tableRepository.findUnique({
       _id: payload.tableId,
     });
@@ -58,12 +58,13 @@ export class ColumnService {
     await this.tableRepository.update(payload.tableId, {
       columns: [...oldColumns, column],
     });
+    return column;
   }
 
   async update(payload: {
     tableId: string;
     column: Partial<Column>;
-  }): Promise<void> {
+  }): Promise<Partial<Column>> {
     const table = await this.tableRepository.findUnique({
       _id: payload.tableId,
     });
@@ -86,18 +87,23 @@ export class ColumnService {
         cause: "COLUMN_NOT_FOUND",
       });
 
-    const newCol = <Column>payload.column;
-    newCol.slug = slugify(newCol.title!);
+    const updated = {
+      ...column.data,
+      ...payload.column,
+      slug: slugify(payload.column.title!),
+    };
 
     const columns = table.columns.map((c) => {
-      if (c._id.toString() === payload?.column?._id?.toString()) return newCol;
-
+      const matched = c._id.toString() === payload.column._id?.toString();
+      if (matched) return updated;
       return c;
     });
 
     await this.tableRepository.update(payload.tableId, {
       columns,
     });
+
+    return updated;
   }
 
   async show(query: {
