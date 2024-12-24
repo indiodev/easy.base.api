@@ -10,19 +10,19 @@ export async function Create(
   const factory = RowFactory();
 
   const file_payload = (
-    request.files as { fieldname: string; originalname: string }[]
+    request.files as { fieldname: string; filename: string; mimetype: string }[]
   )?.reduce(
     (acc, file) => {
       const field = file.fieldname?.replace("[]", "");
       if (!acc[field]) acc[field] = [];
       const isDevelopment = Env.NODE_ENV === "development";
 
-      if (file.originalname && isDevelopment) {
+      if (file.filename && isDevelopment) {
         let filename = "http://localhost:"
           .concat(String(Env.PORT))
           .concat("/files/")
-          .concat(file.originalname);
-        acc[field].push(filename);
+          .concat(file.filename);
+        acc[field].push({ filename, type: file.mimetype });
       }
 
       return acc;

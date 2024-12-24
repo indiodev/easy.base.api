@@ -27,6 +27,8 @@ export class RowRepository {
 
     if (!table || !table.data_collection || !table.schema) return [];
 
+    console.info("table.schema", JSON.stringify(table.schema, null, 2));
+
     const CollectionModal = createDynamicModel(
       table.data_collection!,
       table.schema,
@@ -44,6 +46,11 @@ export class RowRepository {
       }).exec();
 
       if (relatedTable && relatedTable.data_collection && relatedTable.schema) {
+        console.info(
+          "relatedTable.schema",
+          JSON.stringify(relatedTable.schema, null, 2),
+        );
+
         const TemporaryDynamicModel = createDynamicModel(
           relatedTable.data_collection,
           relatedTable.schema,

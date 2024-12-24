@@ -110,7 +110,16 @@ export class TableRepository {
 
     if (columns && Array.isArray(columns) && columns.length > 0) {
       const mapping = columns.map((item: any) => {
-        if (["MULTI_RELATIONAL", "FILE"].includes(item.type)) {
+        if (item.type === "FILE") {
+          return {
+            [item.slug]: {
+              type: getColumnDataType(item.type),
+              required: item.config?.required || false,
+            },
+          };
+        }
+
+        if (item.type === "MULTI_RELATIONAL") {
           return {
             [item.slug]: [
               {
@@ -173,7 +182,16 @@ export class TableRepository {
 
     if (columns && Array.isArray(columns) && columns.length > 0) {
       const mapping = columns.map((item: any) => {
-        if (["MULTI_RELATIONAL", "FILE"].includes(item.type)) {
+        if (item.type === "FILE") {
+          return {
+            [item.slug]: {
+              type: getColumnDataType(item.type),
+              required: item.config?.required || false,
+            },
+          };
+        }
+
+        if (item.type === "MULTI_RELATIONAL") {
           return {
             [item.slug]: [
               {
