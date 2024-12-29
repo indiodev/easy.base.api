@@ -38,6 +38,12 @@ export async function Create(
     {} as Record<string, any>,
   );
 
+  console.log({
+    tableId: request.params.id,
+    ...request.body,
+    ...file_payload,
+  });
+
   const result = await factory.create({
     tableId: request.params.id,
     ...request.body,

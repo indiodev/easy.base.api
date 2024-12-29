@@ -30,19 +30,14 @@ export async function Update(
           .concat("/files/")
           .concat(file.filename);
         acc[field].push({ filename, type: file.mimetype });
-      } else {
+      }
+
+      if (file.filename && isProduction) {
         let filename = "https://easybaseapi-production.up.railway.app"
           .concat("/files/")
           .concat(file.filename);
         acc[field].push({ filename, type: file.mimetype });
       }
-
-      // if (file.filename && isProduction) {
-      //   let filename = "https://easybaseapi-production.up.railway.app"
-      //     .concat("/files/")
-      //     .concat(file.filename);
-      //   acc[field].push({ filename, type: file.mimetype });
-      // }
 
       return acc;
     },

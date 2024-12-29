@@ -18,7 +18,16 @@ export const getColumnDataType = (type: string): any => {
     case "LONG_TEXT":
       return "String";
     case "DROPDOWN":
-      return "String";
+      return {
+        label: {
+          type: "String",
+          required: true,
+        },
+        value: {
+          type: "String",
+          required: true,
+        },
+      };
     case "BOOLEAN":
       return "Boolean";
     case "DATE":
