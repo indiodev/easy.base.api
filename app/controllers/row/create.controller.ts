@@ -16,10 +16,18 @@ export async function Create(
       const field = file.fieldname?.replace("[]", "");
       if (!acc[field]) acc[field] = [];
       const isDevelopment = Env.NODE_ENV === "development";
+      const isProduction = Env.NODE_ENV === "production";
 
       if (file.filename && isDevelopment) {
         let filename = "http://localhost:"
           .concat(String(Env.PORT))
+          .concat("/files/")
+          .concat(file.filename);
+        acc[field].push({ filename, type: file.mimetype });
+      }
+
+      if (file.filename && isProduction) {
+        let filename = "https://easybaseapi-production.up.railway.app"
           .concat("/files/")
           .concat(file.filename);
         acc[field].push({ filename, type: file.mimetype });
