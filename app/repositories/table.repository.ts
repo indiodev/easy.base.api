@@ -119,6 +119,17 @@ export class TableRepository {
           };
         }
 
+        if (item.type === "DROPDOWN") {
+          return {
+            [item.slug]: [
+              {
+                type: getColumnDataType(item.type),
+                required: item.config?.required || false,
+              },
+            ],
+          };
+        }
+
         if (item.type === "MULTI_RELATIONAL") {
           return {
             [item.slug]: [
@@ -188,6 +199,17 @@ export class TableRepository {
               type: getColumnDataType(item.type),
               required: item.config?.required || false,
             },
+          };
+        }
+
+        if (item.type === "DROPDOWN") {
+          return {
+            [item.slug]: [
+              {
+                type: getColumnDataType(item.type),
+                required: item.config?.required || false,
+              },
+            ],
           };
         }
 
