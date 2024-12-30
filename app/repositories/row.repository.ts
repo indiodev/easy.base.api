@@ -142,22 +142,15 @@ export class RowRepository {
       .map((column) => column.slug)
       .join(" ");
 
-    const row = (await CollectionModel.findById(args.id)
+    const row = await CollectionModel.findById(args.id)
       .populate(populateFields)
-      .exec()) as any;
+      .exec();
 
     if (!row) {
       return null;
     }
 
-    const returnRow = {
-      _id: row._id,
-      value: row,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-    };
-
-    return returnRow;
+    return row;
   }
 
   async create({ tableId, ...payload }: any): Promise<any | null> {
@@ -283,12 +276,7 @@ export class RowRepository {
       .populate(populateFields)
       .exec();
 
-    return rows.map((row: any) => ({
-      _id: row._id,
-      value: row,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-    }));
+    return rows;
   }
 
   private getCollectionModel(table: TableDocument): Model<mongoose.Document> {
