@@ -4,11 +4,8 @@ import express from "express";
 import { join } from "path";
 
 import { Env } from "@config/env";
-import connectDatabase from "@config/mongoose/connect";
 
 const kernel = express();
-
-connectDatabase();
 
 kernel.use(
   cors({
